@@ -1,0 +1,541 @@
+<div class="gap clearfix"></div>
+<div class="masonry" id="profile">
+	<div class="box w1 h2 top4" id="changeProfile">
+		<fieldset >
+			<legend>基本信息</legend>
+			<div class="content">
+				<div class="paragraph">
+					<span>姓名:</span>
+					<span class="name"></span>
+				</div>
+				<div class="paragraph">
+					<span>角色:</span>
+					<span class="roleName"></span>
+				</div>
+				<div class="paragraph">
+					<span>注册邮箱:</span>
+					<span class="editable">
+						<span id="email"></span><img src="image/spam.png" id="isEmailVerified" class="ico" title="未验证">
+						<input type="text" name="email" style="display:none;"/>
+					</span>
+					<div class="pull-right">
+						<span class="label label-info edit">编辑</span>
+						<span class="label label-primary save" style="display:none;" id="reviseEmail">保存</span>
+						<span class="label label-warning back" style="display:none;">放弃</span>
+					</div>
+				</div>
+				<div class="paragraph">
+					<span>绑定手机号:</span>
+					<span class="editable">
+						<span id="phoneNumber"></span><img src="image/spam.png" id="isPhoneNumberVerified" class="ico" title="未验证">
+						<input type="text" name="phoneNumber" style="display:none;"/>
+					</span>
+					<div class="pull-right">
+						<span class="label label-info edit">编辑</span>
+						<span class="label label-primary save" style="display:none;" id="revisePhoneNumber">保存</span>
+						<span class="label label-warning back" style="display:none;">放弃</span>
+					</div>
+				</div>
+				<div class="paragraph volunteer" style="display:none;">
+					<span>学校/单位:</span>
+					<div class="pull-right">
+						<span class="label label-info edit affiliation">编辑</span>
+						<span class="label label-primary save" style="display:none;" id="reviseAffiliation">保存</span>
+						<span class="label label-warning back affiliation" style="display:none;">放弃</span>
+					</div>
+					<span class="editable">
+						<span id="affiliations"></span>
+						<input type="hidden" name="affiliations" value=""/>
+					</span>
+				</div>
+				<div class="paragraph">
+					<span>个性签名:</span> 
+					<span class="editable">
+						<span id="autograph"></span>
+						<input type="text" name="autograph" style="display:none;font-size: 16px;" />
+					</span>
+					<div class="pull-right">
+						<span class="label label-info edit">编辑</span>
+						<span class="label label-primary save" style="display:none;" id="reviseAutograph">保存</span>
+						<span class="label label-warning back" style="display:none;">放弃</span>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+	<div class="box w1 top6" id="changePassword">
+		<fieldset>
+			<legend>修改密码<span id="passwordMessage" class="status pull-right"></span></legend>
+			<form class="form-horizontal" role="form" id="reset-password" method="post" action="">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">旧密码</label>
+					<div class="col-sm-5">
+					<input type="password" class="form-control" name="oldpassword" required>
+					</div>
+					<div class="col-sm-4">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">新密码</label>
+					<div class="col-sm-5">
+					<input type="password" class="form-control" name="newpassword" id="newpassword" required>
+					</div>
+					<div class="col-sm-4">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">新密码确认</label>
+					<div class="col-sm-5">
+					<input type="password" class="form-control" name="newpassword-confirm" required>
+					</div>
+					<div class="col-sm-4">
+					</div>
+				</div>
+				<div class="form-group text-center">
+					<button type="submit" class="btn btn-default" id="submit">确认</button>
+					<button type="button" class="btn btn-default" id="cancel">取消</button>
+				</div>
+			</form>
+		</fieldset>
+	</div>
+	<div class="box w1 top5" id="changeAvatar">
+		<fieldset>
+			<legend>我的头像<span id="avatarError"></span></legend>
+			<form action="/api/content/uploadavatar" method="post" enctype="multipart/form-data" id="image_upload">
+				<div class="headimg-upload">
+					<img class="avatar" width="120" height="120" style="float:right;">
+					<span>选择头像</span>
+					<input type="file" id="head_img" name="head_img"/>
+					<button type="button" class="btn btn-default" id="upload_img">上传</button>
+					<span class="error-message text-danger" style="display:none;"></span>
+				</div>
+			</form>
+		</fieldset>
+	</div>
+	<div class="box w1 top7 volunteer" id="changeLocation" style="display:none;">
+		<fieldset>
+			<legend>我方便的活动地点</legend>
+			<div class="pull-right">
+				<span class="label label-info edit location">编辑</span>
+				<span class="label label-primary save" style="display:none;" id="reviseLocation">保存</span>
+				<span class="label label-warning back location" style="display:none;">放弃</span>
+			</div>
+			<div class="editable">
+				<span id="location"></span>
+				<input type="text" name="location" style="display:none;" />
+			</div>
+			<input type="text" name="coordinate" style="display:none;"/>
+			<div class="map" id="mymap"></div>
+		</fieldset>
+	</div>
+</div>
+<script>
+	$(function(){
+		$("span.edit:hidden").each(function() {
+    		$(this).siblings(".back").click();
+    	});
+    	reset_validater();
+    	$container = $("#profile");
+		$container.masonry({
+			itemSelector : '.box',
+			columnWidth : 280,
+			isAnimated: true,
+			animationOptions: {
+			    duration: 300,
+			    easing: 'linear',
+			    queue: false
+			}
+		});
+		$container.imagesLoaded( function() {
+			$container.masonry('reload');
+		});
+    	amplify.request({
+			resourceId: "profile",
+			success: function(data){
+				$(".name").text(data.name);
+				$("#email").text(data.email);
+				$("#phoneNumber").text(data.phoneNumber);
+				$(".roleName").text(translate_role(data.role));
+				$("#autograph").text(data.description);
+				$('.avatar').attr('src',data.avatar);
+				switch(data.sex)
+				{
+					case 0:
+						$("#sex").show();
+						$("#sex").attr("src","image/male.png");
+						$("#sex").attr("title","男");
+						break;
+					case 1:
+						$("#sex").show();
+						$("#sex").attr("src","image/female.png");
+						$("#sex").attr("title","女");
+						break;
+					default:
+						$("#sex").hide();
+						break;
+				}
+				switch(data.role)
+				{
+					case 0://志愿者
+					initializeMyMap();
+    				myAddress = new BMap.Point(110,30);
+    				mymap.centerAndZoom(myAddress,6);
+			            $(".volunteer").show();
+						if(data.affiliation.length>0)
+						{
+							$("#affiliations").text(data.affiliation[0]);
+							for(var i=1;i<data.affiliation.length;i++)
+							{
+								if(data.affiliation[i]!=""&&data.affiliation[i]!=null)
+								{
+									$("#affiliations").text($("#affiliations").text()+","+data.affiliation[i]);
+								}
+							}
+						}
+						if(data.coordinate != null)
+						{
+							myAddress = new BMap.Point(translate_coordinate(data.coordinate).lng,translate_coordinate(data.coordinate).lat);
+					        mymap.centerAndZoom(myAddress,6);
+							addMarker(mymap,myAddress,"我方便的活动地点：<br/>"+data.location,0,"image/home.png");
+							$("#location").text(data.location);
+							$("#coordinate").text(data.coordinate);
+						}
+			            break;
+			        case 1://组织者
+			        case 2://组织机构
+			            break;
+			        default://匿名用户
+			            break;
+				}
+				if(data.IsEmailVerified){
+					$("#isEmailVerified").attr("src","image/security.png");
+					$("#isEmailVerified").attr("title","已验证");
+				}
+				else
+				{
+					$("#isEmailVerified").on("click", function() {
+						if(confirm("确定要发送一封验证邮件？"))
+						{
+							$.ajax({
+								type: "POST",
+								url:"/api/user/sendemailtoverify",
+								success: function () {
+									alert("已发送验证邮件，请登录您的注册邮箱验证！");
+								},
+								error: function (data) {
+								}
+							});
+						}
+					});
+				}
+				if(data.IsPhoneNumberVerified){
+					$("#isPhoneNumberVerified").attr("src","image/security.png");
+					$("#isPhoneNumberVerified").attr("title","已验证");
+				}
+				else
+				{
+					$("#isPhoneNumberVerified").on("click", function() {
+						document.location.href="verifyphonenumber.html";
+					});
+				}
+			},
+			error: function(){
+				$('table tbody').html("<h3>发生未知错误</h3>");
+			},
+		});
+		bindEvent();
+		var $container = $('#profile');
+		$container.masonry({
+			itemSelector : '.box',
+			columnWidth : 280,
+			isAnimated: true,
+			animationOptions: {
+			    duration: 300,
+			    easing: 'linear',
+			    queue: false
+			}
+		});
+		function bindEvent() {
+		    $("#submit").bind("click", function (event) {
+		        if ($("#reset-password").find(".form-group.has-error").length==0) {
+		            amplify.request({
+		                resourceId: "revisePassword",
+		                data: { OldPassword: $("input[name='oldpassword']").val(), NewPassword: $("input[name='newpassword']").val() },
+		                success: function () {
+		                    $(':password').val("");
+		                    $("#passwordMessage").text("修改成功，请牢记新密码！");
+		                },
+		                error: function () {
+		                    $("#passwordMessage").text("原密码错误，请重试！");
+		                },
+		            });
+		        }
+			});
+			$("span.label").bind("click", function(event) {
+				if ($(this).hasClass("edit") || $(this).hasClass("back")) {
+					var edit = $(this).parent().siblings(".editable");
+					edit.find("input").each(function () {
+						$(this).val($(this).siblings("span:first").text());
+					});
+					edit.children().each(function () {
+						$(this).toggle();
+					});
+					$(this).parent().find("span.label").toggle();
+				}
+			});
+			$("span.edit.location").bind("click", function(event) {
+				mymap.addEventListener("click", bindMyMap);
+			});
+			$("span.back.location").bind("click", function(event) {
+				mymap.removeEventListener("click", bindMyMap);
+			});
+			$("span.edit.affiliation").bind("click", function(event) {
+				$("input[name='affiliations']").tagsInput({width:'auto',maxTags:3});
+			});
+			$("span.back.affiliation").bind("click", function(event) {
+				$("input[name='affiliations']").siblings("div").remove();
+			});
+			$("#reviseAffiliation").bind("click", function(event) {
+					var edit = $(this).parent().siblings(".editable");
+					amplify.request({
+						resourceId: "reviseaffiliation",
+						data: {affiliations: $("input[name='affiliations']").val()},
+						success: function(){
+							$("#affiliations").text($("input[name='affiliations']").val());
+						},
+						error: function(){
+							alert("修改失败！");
+						},
+					});
+					$("input[name='affiliations']").siblings("div").remove();
+					edit.children().toggle();
+					$(this).parent().find("span.label").toggle();
+			});
+			$("#reviseEmail").on("click", function(event) {
+					var edit = $(this).parent().siblings(".editable");
+					amplify.request({
+						resourceId: "reviseemail",
+						data: {email: edit.find("input[name='email']").val()},
+						success: function(){
+							edit.find("input").each(function () {
+								$(this).prev().text($(this).val());
+							});
+							$("#email").text($("input[name='email']").val());
+							refresh_verify();
+							alert("再次登陆请使用新邮箱！");
+						},
+						error: function(){
+							alert("修改失败！");
+						},
+					});
+					edit.children().toggle();
+					$(this).parent().find("span.label").toggle();
+			});
+			$("#revisePhoneNumber").on("click", function(event) {
+					var edit = $(this).parent().siblings(".editable");
+					amplify.request({
+						resourceId: "revisephonenumber",
+						data: {phoneNumber: edit.find("input[name='phoneNumber']").val()},
+						success: function(){
+							edit.find("input").each(function () {
+								$(this).prev().text($(this).val());
+							});
+							$("#phoneNumber").text($("input[name='phoneNumber']").val());
+							refresh_verify();
+						},
+						error: function(){
+							alert("修改失败！");
+						},
+					});
+					edit.children().toggle();
+					$(this).parent().find("span.label").toggle();
+			});
+			$("#reviseAutograph").on("click", function(event) {
+					var edit = $(this).parent().siblings(".editable");
+					var input = edit.find("input[name='autograph']").val();
+					if(input.length>25)
+					{
+						alert("签名长度不能超过25！")
+						return;
+					}
+					amplify.request({
+						resourceId: "reviseautograph",
+						data: {description: input},
+						success: function(){
+							edit.find("input").each(function () {
+								$(this).prev().text($(this).val());
+							});
+							$("#description").text(input);
+							$(".description").text(input);
+						},
+						error: function(){
+							alert("修改失败！");
+						},
+					});
+					
+					edit.children().toggle();
+					$(this).parent().find("span.label").toggle();
+			});
+			$("#reviseLocation").on("click", function(event) {
+					var edit = $(this).parent().siblings(".editable");
+					amplify.request({
+						resourceId: "reviselocation",
+						data: {location: edit.find("input[name='location']").val(), coordinate: edit.siblings("input[name='coordinate']").val()},
+						success: function(){
+							edit.find("input").each(function () {
+								$(this).prev().text($(this).val());
+							});
+						},
+						error: function(){
+							alert("修改失败！");
+						},
+					});
+					mymap.removeEventListener("click", bindMyMap);
+					edit.children().toggle();
+					$(this).parent().find("span.label").toggle();
+			});
+			$('#upload_img').click(function(){
+				$("#image_upload").ajaxSubmit(function () {
+					$.get("/api/user/imagepath",function(data){
+						$("img.avatar").attr("src",data.AvatarPath);
+					});
+				});
+			});
+			$("#head_img").change(function () {
+				$(this).siblings("error-message").hide();
+				var img = $(this).get(0).files[0];
+				var size= parseInt(img.size / 1024);
+				var names = img.name.split(".");
+				var suffix_name = names[names.length-1].toLowerCase();
+				var type = img.type;
+				if (!type.match(/image\/*/) || size >= 2048) {
+					$("#upload_img").addClass("disabled");
+					$(this).siblings(".error-message").fadeIn(function () {
+						$(this).text("必须为图片类型并且大小不得超过2M");
+					});
+				} else {
+					$("#upload_img").removeClass("disabled");
+				}
+			});
+		}
+		function refresh_verify() {
+			amplify.request({
+				resourceId: "profile",
+				success: function(data){
+					if(data.IsEmailVerified){
+						$("#isEmailVerified").attr("src","image/security.png");
+						$("#isEmailVerified").attr("title","已验证");
+					}
+					else
+					{
+						$("#isEmailVerified").attr("src","image/spam.png");
+						$("#isEmailVerified").attr("title","未验证");
+						$("#isEmailVerified").on("click", function() {
+							if(confirm("确定要发送一封验证邮件？"))
+							{
+								$.ajax({
+									type: "POST",
+									url:"/api/user/sendemailtoverify",
+									success: function () {
+										alert("已发送验证邮件，请登录您的注册邮箱验证！");
+									},
+									error: function (data) {
+									}
+								});
+							}
+						});
+					}
+					if(data.IsPhoneNumberVerified){
+						$("#isPhoneNumberVerified").attr("src","image/security.png");
+						$("#isPhoneNumberVerified").attr("title","已验证");
+					}
+					else
+					{
+						$("#isPhoneNumberVerified").attr("src","image/spam.png");
+						$("#isPhoneNumberVerified").attr("title","未验证");
+						$("#isPhoneNumberVerified").on("click", function() {
+							document.location.href="verifyphonenumber.html";
+						});
+					}
+				},
+				error: function(){
+				},
+			});
+		}
+		function reset_validater() {
+			var validater = $("#reset-password").validate({
+				rules: {
+					newpassword: {
+						required: true,
+						minlength: 6
+					},
+					"newpassword-confirm": {
+						required: true,
+						equalTo: "#newpassword"
+					}
+				},
+				messages: {
+					oldpassword: {
+						required: "请输入旧密码"
+					},
+					newpassword: {
+						required: "请输入新密码",
+						minlength: "密码长度不得少于{0}"
+					},
+					"newpassword-confirm": {
+						required: "请输入新密码",
+						equalTo: "两次输入密码不一致"
+					}
+				},
+				errorElement: "span",
+				errorPlacement: function(error, elem) {
+					error.addClass("control-label");
+					error.appendTo(elem.parent().next("div"));
+				},
+				highlight: function(label) {
+					$("#passwordMessage").text("");
+					$(label).parents(".form-group").removeClass("has-success").addClass("has-error");
+				},
+				success: function(label) {
+					$("#passwordMessage").text("");
+					label.parents(".form-group").removeClass("has-error").addClass("has-success");
+				},
+				submitHandler: function (form) {
+				}
+			});
+			$("#cancel").bind("click", function () {
+				$("#reset-password").find(".form-group").removeClass("has-error").removeClass("has-success");
+				$("#passwordMessage").text("");
+				validater.resetForm();
+			});
+		}
+		function initializeMyMap(){
+			// 百度地图API功能:显示
+			var width = $(".map").css("width");
+			$("#mymap").css("height", width/2);
+			mymap = new BMap.Map("mymap");
+			// 添加带有定位的导航控件
+			var navigationControl = new BMap.NavigationControl({
+				// 靠左上角位置
+				anchor: BMAP_ANCHOR_TOP_RIGHT,
+				// LARGE类型
+				type: BMAP_NAVIGATION_CONTROL_LARGE,
+				// 启用显示定位
+				enableGeolocation: false
+			});
+			mymap.addControl(navigationControl);
+			mymap.enableScrollWheelZoom(true);
+		}
+		bindMyMap = function (e){
+			var point = e.point;
+			var geoc = new BMap.Geocoder();
+			geoc.getLocation(point, function(rs){
+				var addComp = rs.addressComponents;
+				var edit = $("#mymap").siblings(".editable");
+				edit.siblings("input[name='coordinate']").val("lng:" + point.lng + ",lat:" + point.lat);
+				edit.find("input[name='location']").val(addComp.province + addComp.city + addComp.district  + addComp.street + addComp.streetNumber);
+			});
+			addMarker(mymap,point,"我方便的活动地点：<br/>"+$("input[name='location']").val(),0,"image/home.png");
+		}
+	});
+</script>

@@ -1,0 +1,429 @@
+<div class="clearfix" style="height: 10px;"></div>
+<div class="filter">
+	<table>
+		<tr class="filter-search optional" style="display:none;">
+			<td><b>搜索：</b></td>
+			<td>
+				<div class="form-inline">
+					<div class="form-group">
+						<input type="text" name="search" class="form-control">
+					</div>
+					<div class="form-group">
+						<button type="button" class="btn btn-default btn-xs" style="width: 100%;">
+							<img src="image/search.png" class="ico">
+						</button>
+					</div>
+					<span class="hottags hidden-xs">
+						<strong style="color:white;">&nbsp;&nbsp;活动标签:</strong>
+					</span>
+				</div>
+			</td>
+		</tr>
+		<tr class="filter-search optional hidden-sm hidden-md hidden-lg" style="display:none;">
+			<td><b style="top: 0px;">&nbsp;&nbsp;活动标签:</b></td>
+			<td class="hottags">
+			</td>
+		</tr>
+		<tr class="filter-sort optional" style="display:none;">
+			<td><b>排序：</b></td>
+			<td>
+				<button class="btn" id="sort_by_name" type="button">
+					名称
+					<span class="glyphicon glyphicon-chevron-up"></span>
+					<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<button class="btn" id="sort_by_point" type="button">
+					点数
+					<span class="glyphicon glyphicon-chevron-up"></span>
+					<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<button class="btn" id="sort_by_signintime" type="button">
+					开放注册时间
+					<span class="glyphicon glyphicon-chevron-up"></span>
+					<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<button class="btn" id="sort_by_opentime" type="button">
+					开始时间
+					<span class="glyphicon glyphicon-chevron-up"></span>
+					<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<button class="btn" id="sort_by_ogn" type="button">
+					举办方
+					<span class="glyphicon glyphicon-chevron-up"></span>
+					<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<button class="btn" id="sort_by_people" type="button">
+					参加人数
+					<span class="glyphicon glyphicon-chevron-up"></span>
+					<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<button class="btn" id="sort_by_viewed" type="button">
+					浏览次数
+					<span class="glyphicon glyphicon-chevron-up"></span>
+					<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<button type="button" class="history hidden btn btn-primary pull-right" id="clear_history">clear history</button>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="gap clearfix"></div>
+<div id="related_content">
+	<div class="masonry">
+		<div id="hot_activity">
+		</div>
+		<div class="box w3 text-center" id="loadMore"  style="cursor:pointer;">
+			<b>加载更多</b>	
+		</div>
+	</div>
+</div>
+<div class="go-top text-center">
+	<img src="image/backtotop.png" alt="" style="width:100%; height=100%; ">
+</div>
+<script type="x-tmpl-mustache" id="activity_tmpl">
+	{{#activities}}
+	<div class="hot_activity_item box" id="{{Id}}">
+		<div class="item_photo top-round" style="background: url('{{Cover}}') no-repeat scroll 0% 0% / 270px auto transparent;">
+			<div class="status">{{Status}}</div>
+		</div>
+		<div>
+			<b class="hot_item_title title">{{Name}}</b>
+			<div class="pull-right text">
+				点数:<strong class="point">{{Point}}</strong>
+			</div>
+		</div>
+		<div class="content fix-height">
+			<p class="text">
+				组织方:
+				<span class="OrganizationName text">{{OrganizationName}}</span><br/>
+				时间:
+				<span class="starttime">{{StartTime}}</span><br/>
+				地点:
+				<span class="location">{{Location}}</span>
+			</p>
+		</div>
+		<div class="bar">
+			<div class="bar_item pull-left">
+				<img src="{{ViewedImage}}">
+				<b class="viewtimes">{{VolunteerViewedTime}}</b>
+			</div>
+			<div class="bar_item pull-left">
+				<img src="{{FavoritedImage}}">
+				<b class="favoritetimes">{{VolunteerFavoritedTime}}</b>
+			</div>
+			<div class="bar_item pull-left">
+				<img src="{{SigninedImage}}">
+				<b class="signintimes">{{HasSignedInVolunteerNumber}}</b>
+			</div>
+		</div>
+	</div>
+	{{/activities}}
+</script>
+<script>
+	$(document).ready(function(){
+		var hot_activity_item_Click;
+		var loading = true;
+		$('.filter-sort .glyphicon').hide();
+		$('li.activity>a').off().bind('click', function() {
+			$(".filter-sort .glyphicon").hide();
+			activeList($(this), "ul", "active");
+			$(".filter-search input[name='search']").val("");
+			$("#hottags input:checked").each(function () {
+				$(this).prop("checked", false);
+			});
+			$("#hottags checkbox").prop("checked", false);
+			$("#hottags :radio:first").prop("checked", true);
+			var filter = $(this).attr("id") === "all" ? "" : $(this).attr("id");
+			$(".filter").data("filter", filter);
+			$(".filter-sort").data("pageIndex", null);
+			$(".filter-sort").removeData("maxPage");
+			$("#related_content").data("name", "");
+			$("#related_content").data("tag", "");
+			get_data({"pageIndex": 1});
+		});
+		//$("li.activity:first>a").click();
+		$('.filter-sort .btn').bind("click", function(event){
+			var key=null;
+			var is_increase=false;
+			current_sort=$(this);
+			if($(this).attr('id')=='sort_by_name') {
+				key="Name";
+			}
+			else if($(this).attr('id')=='sort_by_point') {
+				key="Point";
+			}
+			else if($(this).attr('id')=='sort_by_signintime') {
+				key="OpenSignInTime";
+			}
+			else if($(this).attr('id')=='sort_by_opentime') {
+				key="StartTime";
+			}
+			else if($(this).attr('id')=='sort_by_ogn') {
+				key="OrganizationName";
+			}
+			else if($(this).attr('id')=="sort_by_people") {
+				key="hasSignedInVolunteerNumber"
+			}
+			else if($(this).attr('id')=="sort_by_viewed") {
+				key="VolunteerViewedTime";
+			}
+			else {
+				key= null;
+			}
+			$('.filter-sort').data('sortby',key);
+
+			if($(this).data("is_increase")){
+				is_increase=false;
+				$(this).data("is_increase",false);
+			}
+			else {
+				$(this).data("is_increase",true);
+				is_increase=true;
+			}
+			$('.filter-sort').data('is_increase',is_increase);
+			$(".filter-sort").data("pageIndex", 1);
+
+			$('.filter-sort .glyphicon').each(function() {
+				if($(this).parent().attr('id')!= current_sort.attr('id')) {
+					$(this).hide();
+				}
+			});
+
+			if($(this).find('.glyphicon:visible').length!=0) {
+				$(this).find('.glyphicon').toggle();
+			}
+			else {
+				$(this).find('.glyphicon:first').show();
+			}
+
+			get_data({"sortByKey": key, "isAscending": is_increase});
+		});
+		$("#clear_history").bind("click", function(event) {
+			var elem = $(this);
+			elem.prop("disabled", "disabled");
+			amplify.request({
+				resourceId: "clearhistory",
+				success: function () {
+					elem.removeProp("disabled");
+					init("history");
+				},
+				error: function () {
+
+				}
+			})
+		});
+		$(".filter-search .btn").bind("click", function (event) {
+			//搜索事件
+			var search_value = $("input[name='search']").val();
+			$("#related_content").data("name", search_value);
+			get_data();
+		});
+		//绑定tag事件
+		$(".hottags").on("click", ".hottag", function (event) {
+			var tags = [];
+			$(this).toggleClass("selected");
+			$(".hottags .hottag.selected").each(function () {
+				tags.push($(this).text());
+			});
+			$("#related_content").data("tag", tags.join(","));
+			get_data();
+		});
+		$(".filter-search input[name='search']").autocomplete({
+			source: []
+		});
+		$(window).unbind("scroll").scroll(function () {
+			//下拉页面加载内容事件
+			var a = document.documentElement.scrollTop==0? document.body.clientHeight : document.documentElement.clientHeight;
+			var b = document.documentElement.scrollTop==0? document.body.scrollTop : document.documentElement.scrollTop;
+			var c = document.documentElement.scrollTop==0? document.body.scrollHeight : document.documentElement.scrollHeight;
+			if (b > 100 ) {
+				$(".go-top").show();
+			}
+			else {
+				$(".go-top").hide();
+			}
+			if ( a + b == c && loading === false) {
+				var pageIndex = $(".filter-sort").data("pageIndex") || 1;
+				var maxPage = $(".filter-sort").data("maxPage");
+				//console.log("pageIndex:"+pageIndex+"maxPage:"+maxPage);
+				if (typeof maxPage === "undefined" || (pageIndex > 0 && pageIndex < maxPage)) {
+					$(".filter-sort").data("pageIndex", pageIndex+1);
+					loading = true;
+					get_data({
+						"pageIndex": pageIndex + 1,
+						"sortByKey": $(".filter-sort").data("sortby"),
+						"isAscending": $('.filter-sort').data('is_increase')
+					}, true);
+				}
+			}
+		});
+		$("#loadMore").bind("click", function () {
+			var pageIndex = $(".filter-sort").data("pageIndex") || 1;
+			var maxPage = $(".filter-sort").data("maxPage");
+			if (typeof maxPage === "undefined" || (pageIndex > 0 && pageIndex < maxPage)) {
+				$(".filter-sort").data("pageIndex", pageIndex+1);
+				loading = true;
+				get_data({
+					"pageIndex": pageIndex + 1,
+					"sortByKey": $(".filter-sort").data("sortby"),
+					"isAscending": $('.filter-sort').data('is_increase')
+				}, true);
+			}
+			else
+			{
+				$("#loadMore").text("没有更多了@_@");
+			}
+		});
+
+		$(".go-top").bind("click", function (event) {
+			$("html, body").animate({scrollTop: 0}, 100);
+		});
+		$('#main-body, #activities, .activity').off("load").bind("load.init", function (event, resource, options, start, binds) {
+			init(resource, options, start, binds);
+		});
+		function init(resource, options, start, binds){
+			$('.'+resource).removeClass("hidden");
+			$("#related_content").data("source", resource);
+			setTimeout(function () {
+				$("li.activity:first>a").click();
+			}, 100);
+			//$(".optional").hide();
+			if (resource === "collection") {
+			}
+			if (options) {
+				for (var i in options) {
+					if (options[i]) {
+						var elem = ".filter-"+ i;
+						$(elem).show();
+					}
+				}
+			}
+			if (options.search) {
+				amplify.request({
+					resourceId: "hottags",
+					success: function(data){
+						if (data.length) {
+							for (var i = data.length - 1; i >= 0; i--) {
+								$(".hottags").append($('<span class="hottag" title="点击选中">'+data[i]+"</span>"));
+							};
+						}
+						$(".hottags :radio:first").prop("checked", true);
+					},
+					error: function(){
+						$('table tbody').html("<h3>发生未知错误</h3>");
+					},
+				});
+			}
+			if(typeof start != "undefined" && start != null)
+			{
+				get_data(start);
+			}
+			if(typeof  binds != "undefined" && binds != null)
+			{
+				hot_activity_item_Click = binds;
+			}
+			//console.log(hot_activity_item_Click);
+		}
+		function get_data(data, add) {
+			if($("li.activity>a.active").attr("id") === "draft")
+			{
+				var source = "mydraft";
+				var obj = {
+						"sortByKey": "StartTime",
+				};
+			}
+			else
+			{
+				var source = $("#related_content").data("source");
+				var stage = $("li.activity>a.active").attr("id") === "all" ? "" : $("li.activity>a.active").attr("id");
+				var obj = {
+						"stage": translate_stage(stage),
+						"sortByKey": "StartTime",
+				};
+			}
+			var filtersource = get_filtersource();
+			if (filtersource) {
+				obj.filtersource = filtersource;
+			}
+			amplify.request({
+				resourceId: source,
+				data: $.extend(obj, data),
+				success: function(data){
+					if (data.length) {
+						var tmpl= $("#activity_tmpl").html();
+						$("#hot_activity").fadeIn(function () {
+							for (var i = data.length - 1; i >= 0; i--) {
+								if(data[i].Cover == null || data[i].Cover == "")
+							    {
+							        data[i].Cover = "/Static/Images/Activity/default.jpg";
+							    }
+							    data[i].StartTime = time_change(data[i].StartTime);
+							    data[i].Status = translate_activity(data[i].Status);
+							    if(data[i].hasViewed)
+							    {
+							        data[i].ViewedImage = "image/view_pink.png";
+							    }
+							    else
+							    {
+							    	data[i].ViewedImage = "image/view_gray.png";
+							    }
+							    if(data[i].hasFavorited)
+							    {
+							        data[i].FavoritedImage = "image/favorite_pink.png";
+							    }
+							    else
+							    {
+							    	data[i].FavoritedImage = "image/favorite_gray.png";
+							    }
+							    if(data[i].hasSignined)
+							    {
+							        data[i].SigninedImage = "image/signin_pink.png";
+							    }
+							    else
+							    {
+							    	data[i].SigninedImage = "image/signin_gray.png";
+							    }
+							};
+							var rendered = Mustache.render(tmpl, {"activities": data});
+							if (add) {
+								$("#hot_activity").append(rendered).fadeIn("slow");
+							} else {
+								$("#hot_activity").html(rendered).fadeIn("slow");
+							}
+							if ($("#related_content").data("source") === "collection") {
+								$("#hot_activity .star .glyphicon").show();
+							}
+							hot_activity_item_Click();
+						});
+					}
+					else if(!add)
+					{
+						$("#hot_activity").empty();
+					}
+					else
+					{
+						$(".filter-sort").data("maxPage", $(".filter-sort").data("pageIndex"));
+					}
+					loading = false;
+				},
+				error: function(){
+					$('table tbody').html("<h3>发生未知错误</h3>");
+				},
+			});
+		}
+		function get_filtersource() {
+			var name = $("#related_content").data("name");
+			var tags = $("#related_content").data("tag");
+			if (tags) {
+				if (name.length === 0) {
+					return "tags:" + tags;
+				}
+				return name + "+tags:" + tags;
+			} else {
+				if (name) {
+					return name;
+				}
+			}
+		}
+	});
+</script>

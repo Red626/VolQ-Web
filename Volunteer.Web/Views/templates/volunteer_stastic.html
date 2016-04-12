@@ -1,0 +1,101 @@
+<div class="gap clearfix"></div>
+<div class="masonry" id="stastic">
+	<div class="box top1">
+		<fieldset >
+			<legend>成长</legend>
+			<div class="content">
+				<p>
+					<span>等级:</span>
+					<span class="levelName"></span><br/>
+				</p>
+				<p>
+					目前级别：<img class="levelPicture"/><span class="level"></span>
+				</p>
+				<p>
+					分数：<span class="point"></span>(升到下一级还需<span class="pointsToNextLevel"></span>分)
+				</p>
+				<p>
+					参加活动：<span class="signedInActivityNumber"></span>
+				</p>
+				<p>
+					完成率：<span class="completeRate"></span>
+				</p>
+			</div>
+		</fieldset>
+	</div>
+	<div class="box w1 top2">
+		<fieldset>
+			<legend>活动地理信息</legend>
+			<div class="map" id="locationmap"></div>
+		</fieldset>
+	</div>
+	<div class="box top3">
+		<fieldset>
+			<legend>属性成长</legend>
+			<div class="content">
+				<canvas id="hexagram" width="250" height="250"></canvas>
+			</div>
+		</fieldset>
+	</div>
+</div>
+<script>
+	$(function(){
+		initializeLocationMap();
+		locationAddress = new BMap.Point(105,32);
+		locationmap.centerAndZoom(locationAddress,4);
+		amplify.request({
+			resourceId: "statistics",
+			success: function(data){
+				$(".levelName").text(data.levelName);
+				$(".levelPicture").attr("src",data.levelPicture);
+				$(".level").text(data.level);
+				$(".point").text(data.point);
+				$(".pointsToNextLevel").text(data.pointsToNextLevel);
+				$(".signedInActivityNumber").text(data.signedInActivityNumber);
+				$(".completeRate").text(100*data.completeRate.toFixed(4)+"%");
+				drawCanvas('hexagram',data.compassion,data.sacrifice,data.strength,data.endurance,data.intelligence,true);
+			},
+			error: function(){
+				$('table tbody').html("<h3>发生未知错误</h3>");
+			},
+		});
+		amplify.request({
+			resourceId: "mine",
+			success: function(datas){
+				for (var i = 0; i < datas.length; i++) {
+					var lng=translate_coordinate(datas[i].Coordinate).lng;
+					var lat=translate_coordinate(datas[i].Coordinate).lat;
+                    addMarker(locationmap,new BMap.Point(lng,lat),datas[i].Name+"<br/>"+datas[i].Location,1,"image/foot.png");
+			    };
+			},
+			error: function(){
+				$('table tbody').html("<h3>发生未知错误</h3>");
+			},
+		});
+	
+		function initializeLocationMap(){
+			// 百度地图API功能:显示
+			var width = $(".map").css("width");
+			$("#locationmap").css("height", width/2);
+			locationmap = new BMap.Map("locationmap");
+			locationmap.addEventListener("click", function(e){
+				var point = e.point;
+				var geoc = new BMap.Geocoder();
+				geoc.getLocation(point, function(rs){
+					var addComp = rs.addressComponents;
+				});
+			});
+			// 添加带有定位的导航控件
+			var navigationControl = new BMap.NavigationControl({
+				// 靠左上角位置
+				anchor: BMAP_ANCHOR_TOP_RIGHT,
+				// LARGE类型
+				type: BMAP_NAVIGATION_CONTROL_LARGE,
+				// 启用显示定位
+				enableGeolocation: false
+			});
+			locationmap.addControl(navigationControl);
+			locationmap.enableScrollWheelZoom(true);
+		}
+	});
+</script>

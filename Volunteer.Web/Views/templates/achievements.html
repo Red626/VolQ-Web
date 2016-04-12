@@ -1,0 +1,132 @@
+<div class="related_content masonry" id="achievement_container">
+</div>
+<div class="modal fade" id="achievement-modal" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content achievement">
+			<div class="modal-header text-right">
+				<h3 class="text-primary" id="badgeName" style="font-weight: bold;"></h3>
+			</div>
+			<div class="modal-body">
+				<div class="text-right time" style="color: #a9a9a9;">
+					获取时间：<span id="badgeGrantedTime"></span>
+				</div>
+				<p id="badgeDescription" style="margin-top:10px; margin-botton: 10px;"></p>
+				&nbsp;
+				<strong>获取条件：</strong>
+				<hr class="solid_line">
+				<ol id="badgeRequirementDescription"></ol>
+			</div>
+			<img src="" id="badgePicture">
+		</div>
+	</div>
+</div>
+<div class="go-top text-center">
+	<img src="image/backtotop.png" alt="" style="width:100%; height=100%; ">
+</div>
+<script type="x-tmpl-mustache" id="achievement-model">
+	<div class="box w0" data-toggle="modal" data-target="#achievement-modal">
+		<div class="item_head">
+			<img src="{{badgePicture}}" class="item_badge">
+		</div>
+		<h4 class="text-center">{{badgeName}}</h4>
+	</div>
+</script>
+<script>
+	$(function(){
+		var $container = $('#achievement_container');
+		$container.masonry({
+			itemSelector : '.box',
+			columnWidth : 150,
+			isAnimated: true,
+			animationOptions: {
+			    duration: 300,
+			    easing: 'linear',
+			    queue: false
+			}
+		});
+		var id = getquery();
+		if (id === "") {
+			amplify.request({
+				resourceId: "myachievementscount",
+				success: function(data){
+					$container.data("pageMax", Math.ceil(parseInt(data)/20));
+				},
+				error: function(){
+					$('table tbody').html("<h3>发生未知错误</h3>");
+				},
+			});
+			get_data(1);
+		} else {
+			get_data(1, id);
+		}
+		function get_data(pageIndex, id) {
+			amplify.request({
+				resourceId: "myachievements",
+				data: {"pageIndex": pageIndex, "id": id},
+				success: show_data(pageIndex),
+				error: function(){
+					$container.html("<h3>添加好友后可以查看好友成就！</h3>");
+				},
+			});
+		}
+		function show_data(pageIndex) {
+			$container.data("pageIndex", pageIndex);
+			return function (data) {
+				var template = $("#achievement-model").html();
+				if (data.length === 0) {
+					if ($container.data("pageIndex") === 1) {
+						$("#container").html("<h2>快去获得成就吧~</h2>");
+					}
+					$container.data("pageIndex", 0);
+				}
+				for (var i = 0; i < data.length; i++) {
+					var box = Mustache.render(template,{badgePicture:data[i].badgePicture, badgeName:data[i].badgeName});
+					$container.append( box );
+					$(".box").click(function(){
+						amplify.request({
+							resourceId: "achievementdetail",
+							data: {badgename:$(this).find("h4").text()},
+							success: function(data){
+								$("#badgeName").text(data.badgeName);
+								$("#badgePicture").attr("src",data.badgePicture);
+								$("#badgeGrantedTime").text(time_change(data.badgeGrantedTime));
+								$("#badgeDescription").text(data.badgeDescription);
+								$("#badgeRequirementDescription").empty();
+								for (var i = data.badgeRequirementDescription.length - 1; i >= 0; i--) {
+									$("#badgeRequirementDescription").append("<li>"+data.badgeRequirementDescription[i]+"</li>");
+								};
+							},
+							error: function(){
+								$('table tbody').html("<h3>发生未知错误</h3>");
+							}
+						});
+					});
+				}
+				$container.imagesLoaded( function() {
+					$container.masonry('reload');
+				});
+			}
+		}
+		$(window).unbind("scroll").scroll(function () {
+			var a = document.documentElement.scrollTop==0? document.body.clientHeight : document.documentElement.clientHeight;
+			var b = document.documentElement.scrollTop==0? document.body.scrollTop : document.documentElement.scrollTop;
+			var c = document.documentElement.scrollTop==0? document.body.scrollHeight : document.documentElement.scrollHeight;
+			if (b > 100 ) {
+				$(".go-top").show();
+			}
+			else {
+				$(".go-top").hide();
+			}
+			if ( a + b == c) {
+				var pageIndex = $container.data("pageIndex");
+				var pageMax = $container.data("pageMax");
+				if (pageIndex > 0 && pageIndex < pageMax) {
+					get_data(pageIndex + 1);
+				}
+			}
+		});
+		$(".go-top").bind("click", function (event) {
+			$("html, body").animate({scrollTop: 0}, 100);
+		});
+	});
+</script>

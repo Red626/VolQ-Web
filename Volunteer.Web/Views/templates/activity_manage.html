@@ -1,0 +1,680 @@
+<div class="gap"></div>
+<div id="activity_manage" class="masonry">
+	<div class="box w3 top2" id="activity_information">
+		<fieldset >
+			<legend>活动概况<img src="image/clock_pink.png" class="ico"><span id="activity-countDown" class="countdown">活动已结束！</span><b class="activityName pull-right"></b></legend>
+			<div class="content row">
+				<div class="col-sm-6">
+					<p>
+						<b>所属机构：</b>
+						<span class="organizationName"></span>
+					</p>
+					<p>
+						<b>活动时间：</b>
+						<span class="startTime"></span>~<span class="finishTime"></span>
+					</p>
+					<p>
+						<b>参与人数：</b>
+						<span class="hasSignedInVolunteerNumber"></span>(<span class="leastVolunteers"></span>~<span class="mostVolunteers"></span>)
+					</p>
+				</div>
+				<div class="col-sm-6">
+					<p>
+						<b>活动状态：</b>
+						<span class="status"></span> 
+					</p>
+					<p>
+						<b>活动地点：</b>
+						<span class="location"></span>
+					</p>
+					<p>
+						<b>收藏人数：</b>
+						<span class="favoritedTime"></span>
+					</p>
+				</div>
+				
+			</div>
+		</fieldset>
+	</div>
+	<div class="box w3 top3" id="activity_QRCode">
+		<fieldset >
+			<legend>二维码签入签出</legend>
+			<div class="text-center">
+				<button class="btn btn-info QRCode" data-action="checkin">签到</button>
+				<button class="btn btn-info QRCode" data-action="checkoutcomplete">完成(成功)</button>
+				<button class="btn btn-info QRCode" data-action="checkoutnotcomplete">完成(失败)</button>
+				<button class="btn btn-info QRCode" data-action="checkoutdirectlycomplete">直接完成(成功)</button>
+				<button class="btn btn-info QRCode" data-action="checkoutdirectlynotcomplete">直接完成(失败)</button>
+			</div>
+		</fieldset>
+	</div>
+	<div class="box w1 h2 top5">
+		<table class="table table-hover scroll">
+			<thead>
+				<tr>
+					<th>已报名的用户</th>
+					<th>手机号</th>
+					<th><input type="checkbox" class="checkAll"></th>
+				</tr>
+			</thead>
+			<tbody id="to_kickout">
+			</tbody>
+		</table>
+		<div class="operate">
+			<input type="text" class="search">
+			<button class="btn btn-default">
+				<span class="glyphicon glyphicon-search"></span> 搜索
+			</button>
+			<button class="btn btn-default sendMessage" data-toggle="modal" data-target="#Message-modal">发送短信</button>
+			<button class="btn btn-info kickout">踢出</button>
+		</div>
+	</div>
+	<div class="box w1 h2 top0">
+		<table class="table table-hover scroll">
+			<thead>
+				<tr>
+					<th>已踢出的用户</th>
+					<th>手机号</th>
+					<th><input type="checkbox" class="checkAll"></th>
+				</tr>
+			</thead>
+			<tbody id="kickedout">
+			</tbody>
+		</table>
+		<div class="operate">
+			<input type="text" class="search">
+			<button class="btn btn-default">
+				<span class="glyphicon glyphicon-search"></span> 搜索
+			</button>
+			<button class="btn btn-default sendMessage" data-toggle="modal" data-target="#Message-modal">发送短信</button>
+			<button class="btn btn-info unkickout">报名</button>
+		</div>
+	</div>
+
+	<div class="box w1 h2 top5">
+		<table class="table table-hover scroll">
+			<thead>
+				<tr>
+					<th>待签到的用户</th>
+					<th>手机号</th>
+					<th><input type="checkbox" class="checkAll"></th>
+				</tr>
+			</thead>
+			<tbody id="to_checkin">
+			</tbody>
+		</table>
+		<div class="operate">
+			<input type="text" class="search">
+			<button class="btn btn-default">
+				<span class="glyphicon glyphicon-search"></span> 搜索
+			</button>
+			<button class="btn btn-default sendMessage" data-toggle="modal" data-target="#Message-modal">发送短信</button>
+			<button class="btn btn-info checkin">check in</button>
+		</div>
+	</div>
+	<div class="box w1 h2 top0">
+		<table class="table table-hover scroll">
+			<thead>
+				<tr>
+					<th>已完成活动的用户</th>
+					<th>手机号</th>
+					<th>完成时间</th>
+				</tr>
+			</thead>
+			<tbody id="completed">
+			</tbody>
+		</table>
+		<div class="operate">
+			<input type="text" class="search">
+			<button class="btn btn-default">
+				<span class="glyphicon glyphicon-search"></span> 搜索
+			</button>
+		</div>
+	</div>
+
+	<div class="box w1 h2 top5">
+		<table class="table table-hover scroll">
+			<thead>
+				<tr>
+					<th>等待完成的用户</th>
+					<th>手机号</th>
+					<th><input type="checkbox" class="checkAll"></th>
+				</tr>
+			</thead>
+			<tbody id="checkedin">
+			</tbody>
+		</table>
+		<div class="operate">
+			<input type="text" class="search">
+			<button class="btn btn-default">
+				<span class="glyphicon glyphicon-search"></span> 搜索
+			</button>
+			<button class="btn btn-default sendMessage" data-toggle="modal" data-target="#Message-modal">发送短信</button>
+			<button class="btn btn-info checkout">完成</button>
+		</div>
+	</div>
+	<div class="box w1 h2 top0">
+		<table class="table table-hover scroll">
+			<thead>
+				<tr>
+					<th>未完成活动的用户</th>
+					<th>手机号</th>
+					<th>完成时间</th>
+				</tr>
+			</thead>
+			<tbody id="failed">
+			</tbody>
+		</table>
+		<div class="operate">
+			<input type="text" class="search">
+			<button class="btn btn-default">
+				<span class="glyphicon glyphicon-search"></span> 搜索
+			</button>
+		</div>
+	</div>
+	<div class="modal fade" id="checkout-modal" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">
+						&times;</span><span class="sr-only">close</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>是否完成活动？(无法更改)</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary yes">完成</button>
+					<button type="button" class="btn btn-danger no" data-dismiss="modal">未完成</button>
+					<button type="button" class="btn btn-warning" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="QRCode-modal" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">
+						&times;</span><span class="sr-only">close</span>
+					</button>
+					<h4 class="actionName text-primary"></h4>
+				</div>
+				<div class="modal-body">
+					<img src="" style="width: 100%;">
+				</div>
+				<div class="modal-footer">
+					<label class="pull-left">扫描二维码</label>
+					<img src="image/clock_pink.png" class="ico">
+					<span id="qrcode-countDown" class="countdown"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="Message-modal" role="dialog">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">
+						&times;</span><span class="sr-only">close</span>
+					</button>
+					<h4 class="text-primary">手机客户端扫描二维码</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-xs-6">
+						<div id="blank" class="text-center">
+							<h2 class="text-danger" style="display:none;">Load.....</h2>
+						</div>
+						<img src="" style="width: 100%; display:none;">
+						</div>
+						<div class="col-xs-6">
+							<table class="table text-left">
+								<thead>
+									<tr>
+										<th>姓名</th>
+										<th>手机号</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<form role="form">
+						<div class="form-group">
+							<textarea class="form-control" rows="3" placeholder="输入短信内容"></textarea>
+						</div>
+						<div class="form-group">
+							<button class="btn btn-info" type="button" id="generate">生成</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="x-tmpl-mustache" id="check_in">
+	<tr id="{{VolunteerId}}">
+		<td><a href="visitor.html?id={{VolunteerId}}" target="_blank">{{VolunteerName}}</a></td>
+		<td>{{VolunteerPhoneNumber}}</td>
+		<td><input type='checkbox'></td>
+	</tr>
+</script>
+<script type="x-tmpl-mustache" id="kick_out">
+	<tr data="{{VolunteerId}}">
+		<td><a href="visitor.html?id={{VolunteerId}}" target="_blank">{{VolunteerName}}</a></td>
+		<td>{{VolunteerPhoneNumber}}</td>
+		<td><input type='checkbox'></td>
+	</tr>
+</script>
+<script type="x-tmpl-mustache" id="check_out">
+	<tr data="{{VolunteerId}}">
+		<td><a href="visitor.html?id={{VolunteerId}}" target="_blank">{{VolunteerName}}</a></td>
+		<td>{{VolunteerPhoneNumber}}</td>
+		<td>{{CheckedOutTime}}</td>
+	</tr>
+</script>
+<script type="text/javascript">
+	var activityId;
+	var deadline;
+	var start;
+	$(function(){
+		activityId = getquery();
+		function GetData()
+		{
+	    	amplify.request({
+				resourceId: "activity_detail",
+				data: {id: activityId},
+				success: function(activity_data){
+					$("#activity_information .activityName").text(activity_data.Name);
+					$("#activity_information .organizationName").text(activity_data.OrganizationName);
+					$("#activity_information .status").text(translate_activity(activity_data.Status));
+					$("#activity_information .startTime").text(time_change(activity_data.StartTime));
+					$("#activity_information .finishTime").text(time_change(activity_data.FinishTime));
+					$("#activity_information .location").text(activity_data.Location);
+					$("#activity_information .hasSignedInVolunteerNumber").text(activity_data.HasSignedInVolunteerNumber);
+					$("#activity_information .leastVolunteers").text(activity_data.LeastVolunteers);
+					if (activityId.MostVolunteers === 0) {
+						$("#activity_information .mostVolunteers").text("无上限");
+					} else {
+						$("#activity_information .mostVolunteers").text(activity_data.MostVolunteers);
+					}
+					$("#activity_information .favoritedTime").text(activity_data.VolunteerFavoritedTime);
+					$("#to_checkin").empty();
+					$("#to_kickout").empty();
+					$("#kickedout").empty();
+					$("#checkedin").empty();
+					$("#failed").empty();
+					$("#completed").empty();
+					var templ_check_in = $("#check_in").html();
+					var templ_kick_out = $("#kick_out").html();
+					var templ_check_out = $("#check_out").html();
+					for (var i = activity_data.VolunteersRecord.length - 1; i >= 0; i--) {
+						activity_data.VolunteersRecord[i].CheckedOutTime=time_change(activity_data.VolunteersRecord[i].CheckedOut.CheckedOutTime);
+						var rendered_check_in = Mustache.render(templ_check_in, activity_data.VolunteersRecord[i]);
+						var rendered_kick_out = Mustache.render(templ_kick_out, activity_data.VolunteersRecord[i]);
+						var rendered_check_out = Mustache.render(templ_check_out, activity_data.VolunteersRecord[i]);
+						switch(activity_data.VolunteersRecord[i].VolunteerStatus)
+						{
+							case 0:
+								$("#to_checkin").prepend(rendered_check_in);
+								$("#to_kickout").prepend(rendered_kick_out);
+								break;
+							case 2:
+								$("#checkedin").prepend(rendered_check_in);
+								break;
+							case 3:
+							case 4:
+								$("#failed").prepend(rendered_check_out);
+								break;
+							case 5:
+								$("#completed").prepend(rendered_check_out);
+								break;
+							case 7:
+								$("#kickedout").prepend(rendered_kick_out);
+								break;
+							default:
+								break;
+						}
+					};
+					deadline=new Date(activity_data.FinishTime);
+					start=new Date(activity_data.StartTime);
+					if(activity_data.Status<7) {
+						CalculateCountDown();
+					}
+				},
+				error: function(){
+					$('table tbody').html("<h3>发生未知错误</h3>");
+				}
+			});
+		}
+		GetData();
+		$("input.checkAll").click(function () {
+			if (typeof $(this).data("all") === "undefined" || !$(this).data("all")) {
+				$(this).data("all", true);
+			}
+			else {
+				$(this).data("all", false);
+			}
+			var table = $(this).parents("thead").siblings("tbody");
+			var all = $(this).data("all");
+			table.find("tr").each(function() {
+				if (all) {
+					if (!$(this).hasClass("success")) {
+						$(this).click();
+					}
+				} else {
+					if ($(this).hasClass("success")) {
+						$(this).click();
+					}
+				}
+			});
+		});
+		$(".w1 tbody").on("click", "tr", function (event) {
+			$(this).toggleClass("success");
+			var checkbox = $(this).find("[type='checkbox']");
+			checkbox.prop("checked", !checkbox.prop("checked"));
+		});
+		$(".w1 tbody").on("click", "td input:checkbox", function (event) {
+			event.stopPropagation();
+			$(this).parents("tr").toggleClass("success");
+		});
+		$("#activity_manage").on("click", ".btn", function (event) {
+			var tbody = $(this).parent().siblings(".table").find("tbody");
+
+			if ($(this).hasClass("kickout")) {
+				var vols_id = [];
+				tbody.find("input:checked").each(function () {
+					var vol_id = $(this).parents("tr:first").attr("data");
+					vols_id.push(vol_id);
+				});
+				var data = {};
+				data.activityId = activityId;
+				data.volunteerIds = vols_id;
+				if(vols_id.length>0)
+				{
+					amplify.request({
+						resourceId: "kickout",
+						data: data,
+						success: function () {
+							tbody.find("input:checked").each(function () {
+								GetData();
+							});
+						},
+						error: function () {
+
+						}
+					});
+				}
+				return;
+			}
+			else if ($(this).hasClass("unkickout")) {
+				var vols_id = [];
+				tbody.find("input:checked").each(function () {
+					var vol_id = $(this).parents("tr:first").attr("data");
+					vols_id.push(vol_id);
+				});
+				var data = {};
+				data.activityId = activityId;
+				data.volunteerIds = vols_id;
+				if(vols_id.length>0)
+				{
+					amplify.request({
+						resourceId: "unkickout",
+						data: data,
+						success: function () {
+							tbody.find("input:checked").each(function () {
+								GetData();
+							});
+						},
+						error: function () {
+
+						}
+					});
+				}
+				return;
+			}
+			else if ($(this).hasClass("checkin")) {
+				var vols_id = [];
+				tbody.find("input:checked").each(function () {
+					var vol_id = $(this).parents("tr:first").attr("id");
+					vols_id.push(vol_id);
+				});
+				var data = {};
+				data.activityId = activityId;
+				data.volunteerIds = vols_id;
+				amplify.request({
+					resourceId: "checkin",
+					data: data,
+					success: function () {
+						tbody.find("input:checked").each(function () {
+							GetData();
+						});
+					},
+					error: function () {
+
+					}
+				});
+				return;
+			}
+			else if ($(this).hasClass("checkout")) {
+				$('#checkout-modal').modal();
+				return ;
+			}
+			else if ($(this).hasClass("QRCode")) {
+				$('#QRCode-modal').modal();
+				$("#QRCode-modal").data("action", $(this).data("action"));
+				return;
+			}
+			else if ($(this).hasClass("yes") || $(this).hasClass("no")) {
+				var vols_id = [];
+				$("#checkedin").find("input:checked").each(function () {
+					var tr_elem = $(this).parents("tr:first");
+					var vol_id = tr_elem.attr("id");
+					var name = tr_elem.find("td:first").text();
+					vols_id.push(vol_id);
+				});
+				var data = {};
+				data.activityId = activityId;
+				data.volunteerIds = vols_id;
+				data.isComplete = false;
+				if ($(this).hasClass("yes")) {
+					data.isComplete = true;
+				}
+
+				$("#checkedin").find("input:checked").each(function () {
+					var tr_e = $(this).parents("tr:first").removeClass("info");
+					tr_e.find("[type='checkbox']").parent().remove();
+					var now = new Date();
+					tr_e.append("<td>" + now.toLocaleString() + "</td>");
+					if (data.isComplete) {
+						tr_e.appendTo("#completed");
+					}
+					else {
+						tr_e.appendTo("#failed");
+					}
+				});
+
+				$('#checkout-modal').modal('hide');
+				amplify.request({
+					resourceId: "checkout",
+					data: data,
+					success: function () {
+						$('#checkout-modal').modal('hide');
+					},
+					error: function () {
+
+					}
+				});
+				return;
+			}
+			else if ($(this).hasClass("check_all")) {
+				tbody.find("tr").each(function () {
+					$(this).addClass("success");
+					$(this).find("[type='checkbox']").prop("checked", true);
+				});
+				return ;
+			}
+			else if ($(this).hasClass("uncheck_all")) {
+				tbody.find("tr").each(function () {
+					$(this).removeClass("success");
+					$(this).find("[type='checkbox']").prop("checked", false);
+				});
+				return ;
+			}
+		});
+		$("#QRCode-modal").on("shown.bs.modal", _qrCode);
+		function _qrCode(event) {
+			var action = $("#QRCode-modal").data("action");
+			$("#QRCode-modal .actionName").text(action);
+			$.get("/api/organizer/activityactionqrcode", {activityid: activityId, action: action}, function (data) {
+				$("#QRCode-modal .modal-body img").data("expireTime", new Date(data.expireTime));
+				$("#QRCode-modal .modal-body img").trigger("expire");
+				$("#QRCode-modal .modal-body img").attr("src", "data:img/png;base64," + data.image);
+			});
+		}
+		$("#QRCode-modal").on("hidden.bs.modal", function () {
+			$("#QRCode-modal .modal-body img").attr("src", "");
+			$("#QRCode-modal .modal-body img").off("expire");
+			$("#QRCode-modal .actionName").text("");
+			$("#qrcode-countDown").text("0秒");
+			clearTimeout($(this).data("timer"));
+		});
+		$("#QRCode-modal").on("expire", ".modal-body img", function () {
+			var expireTime = $(this).data("expireTime");
+			const MILL_SECONDS = 1000;
+			(function check_expire () {
+				var t = setTimeout(function () {
+					var now = new Date();
+					var distance = Math.round((expireTime.getTime() - now.getTime())/MILL_SECONDS-5);
+					$("#qrcode-countDown").text(distance+"秒");
+					if (distance <= 0) {
+						_qrCode();
+					} else {
+						check_expire();
+					}
+				}, 1000);
+				$("#QRCode-modal").data("timer", t);
+			})();
+		});
+		$("#Message-modal").on("shown.bs.modal", function (event) {
+			var btn = $(event.relatedTarget);
+			var table = btn.parents(".operate:first").prev("table");
+			if (table) {
+				var tbody = table.find("tbody");
+				var template = "{{#person}}<tr><td>{{Key}}</td><td>{{Value}}</td></tr>{{/person}}";
+				var members =[];
+				var dic = [];
+				var not_phone = 0;
+				tbody.find("input:checked").each(function () {
+					var tr_elem = $(this).parents("tr:first");
+					var person = {};
+					var re=/^(13|14|15|17|18)\d{9}$/;
+					person.Key = tr_elem.find("td:first").text();
+					person.Value = tr_elem.find("td:eq(1)").text();
+					if (re.test(person.Value)) {
+						members.push(person);
+					} else {
+						not_phone += 1;
+					}
+				});
+				if (not_phone) {
+					alert("有" + not_phone + "人没有手机号");
+				}
+				$("#Message-modal").data("members", members);
+				var tr_rendered = Mustache.render(template, {person: members});
+				$("#Message-modal .modal-body tbody").append(tr_rendered);
+			}
+		});
+		$("#Message-modal").on("hidden.bs.modal", function () {
+			$("#Message-modal #blank").show();
+			$("#Message-modal img").attr("src", "").hide();
+			$("#Message-modal .modal-body tbody").empty();
+			$("#Message-modal .modal-footer textarea").val("");
+		});
+		$("#Message-modal").on("click", "#generate", function () {
+			$("#Message-modal #blank h2").show();
+			var data = {};
+			var content = $("#Message-modal .modal-footer textarea").val();
+			data.activityId = activityId;
+			data.content = content;
+			data.volunteerNameAndPhoneNumber = $("#Message-modal").data("members");
+			if (data.volunteerNameAndPhoneNumber.length) {
+				$.post("/api/organizer/activitysendsmsqrcode", data, function (data) {
+					$("#Message-modal #blank").hide();
+					$("#Message-modal img").show();
+					$("#Message-modal img").attr("src", "data:img/png;base64," + data.image)
+				});
+			}
+		});
+	});
+	function CalculateCountDown()
+	{
+		var status;
+		var remainSeconds=0;
+		if((new Date())<start)
+		{
+			remainSeconds=start-(new Date()); //时间差的毫秒数
+			status="开始";
+		}
+		else
+		{
+			remainSeconds=deadline-(new Date()); //时间差的毫秒数
+			status="结束";
+		}
+		if(remainSeconds<0)
+		{
+			$('#activity-countDown').text("活动已结束！");
+			$('#activity-countDown').siblings("img.ico").src("image/clock_gray.png");
+		}
+		else
+		{
+			//计算出相差天数
+			var days=Math.floor(remainSeconds/(24*3600*1000));
+			if(days>0)
+			{
+				$('#activity-countDown').text("离活动"+status+"还剩"+days+"天！");
+				t=setTimeout("CalculateCountDown()",5000000);
+			}
+			else
+			{
+				//计算出小时数
+				var leave1=remainSeconds%(24*3600*1000);	//计算天数后剩余的毫秒数
+				var hours=Math.floor(leave1/(3600*1000));
+				if(hours>0)
+				{
+					$('#activity-countDown').text("离活动"+status+"还剩"+hours+"小时！");
+					t=setTimeout("CalculateCountDown()",500000);
+				}
+				else
+				{
+					//计算相差分钟数
+					var leave2=leave1%(3600*1000);	//计算小时数后剩余的毫秒数
+					var minutes=Math.floor(leave2/(60*1000));
+					if(minutes>1)
+					{
+						$('#activity-countDown').text("离活动"+status+"还剩"+minutes+"分钟！");
+						t=setTimeout("CalculateCountDown()",50000);
+					}
+					else if(minutes>0)
+					{
+						$('#activity-countDown').text("离活动"+status+"还剩"+minutes+"分钟！");
+						t=setTimeout("CalculateCountDown()",500);
+					}
+					else
+					{
+						//计算相差秒数
+						var leave3=leave2%(60*1000);	//计算分钟数后剩余的毫秒数
+						var seconds=Math.round(leave3/1000);
+						$('#activity-countDown').text("离活动"+status+"还剩"+minutes+"秒！");
+						t=setTimeout("CalculateCountDown()",500);
+					}
+				}
+			}
+		}
+	}
+	
+</script>

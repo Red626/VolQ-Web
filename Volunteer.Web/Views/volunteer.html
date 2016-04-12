@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<title>志趣VolQ_志愿者</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/lib/stickUp.min.js"></script>
+	<script src="js/amplify.min.js"></script>
+	<script src="js/sammy-latest.min.js"></script>
+	<script src="js/lib/mustache.js"></script>
+	<script src="js/lib/jquery-ui.autocomplete.min.js"></script>
+	<script src="js/jquery.masonry.min.js"></script>
+	<script src="js/my.js"></script>
+	<script src="js/jquery.tagsinput.js"></script>
+	<script src="js/jquery.easing.min.js"></script>
+	<script src="js/jquery.zaccordion.js"></script>
+	<script src="js/summernote.min.js"></script>
+	<script src="http://api.map.baidu.com/api?v=2.0&ak=mY1LyCl9R9Hiziuye9sGfR1G"></script>
+	<link rel="stylesheet" type="text/css" href="css/lib/jquery-ui.autocomplete.min.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/jquery.tagsinput.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/volunteer.css">
+	<link rel="icon" href="image/volq.ico" type="image/x-icon" />
+</head>
+<body>
+	<div class="site-header">
+		<div class="row">
+			<div class="col-lg-3 visible-lg-block">
+				<img src="image/hands.png" class="site-logo">
+			</div>
+			<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3">
+				<h1 class="volq">志趣</h1>
+			</div>
+			<div class="col-xs-10 col-sm-9  col-md-9 col-lg-6">
+				<div id="avatar" class="pull-left">
+					<img class="avatar img-responsive" alt="">
+					<div>
+						<img class="levelPicture"> </img>
+					</div>
+				</div>
+				<div class="pull-left">
+					<h3 class="name"></h3>
+					<span class="roleName"></span>
+					<a id="logout" role="menuitem" href="javascript:void(0);" title="注销"><img src="image/off_white.png" class="ico"></a>
+					<h5 class="description"></h5>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="site-menu">
+		<div class="not-logged text-right">
+			<a href="signin.html"><button class="btn btn-default">注册/登陆</button></a>
+		</div>
+		<div class="logged hidden">
+			<div class="pull-left">
+				<div class="visible-lg-block" style="position:relative;">
+					<img src="image/volq_logo.png" alt="" style="width: 160px; position: relative; top: 5px;">
+					<div class="list-group menu-left">
+				        <a class="list-group-item" role="menuitem" href="#/"><img src="image/circles_gray.png" class="ico">我的主页</a>
+				      	<a class="list-group-item" role="menuitem" href="#/activities"><img src="image/signin_gray.png" class="ico">浏览活动</a>
+				        <a class="list-group-item" role="menuitem" href="#/mine"><img src="image/mine_gray.png" class="ico">我的活动</a>
+				        <a class="list-group-item" role="menuitem" href="#/collection"><img src="image/favorite_gray.png" class="ico">我的收藏</a>
+				        <a class="list-group-item" role="menuitem" href="#/history"><img src="image/view_gray.png" class="ico">浏览历史</a>
+				        <a class="list-group-item" role="menuitem" href="#/me"><img src="image/me.png" class="ico">个人资料</a>
+				        <a class="list-group-item" role="menuitem" href="#/friends"><img src="image/friends.png" class="ico">我的好友</a>
+						<a class="list-group-item" role="menuitem" href="#/service"><img src="image/mail_pink.png" class="ico">我要吐槽</a>
+				    </div>
+				</div>
+				<div class="dropdown hidden-lg">
+				    <a id="menu" data-toggle="dropdown" href="javascript:void(0);">
+				    	<button class="btn btn-default">
+				    		<span class="caret"></span>
+					   		<strong id="currentPath">我的主页</strong>
+					    </button>
+				    </a>
+				    <ul class="dropdown-menu self-menu" role="menu">
+				      <li role="presentation">
+				         <a role="menuitem" href="#/"><img src="image/circles_gray.png" class="ico">我的主页</a>
+				      </li>
+				      <li role="presentation">
+				         <a role="menuitem" href="#/activities"><img src="image/signin_gray.png" class="ico">浏览活动</a>
+				      </li>
+				      <li role="presentation">
+				        <a role="menuitem" href="#/mine"><img src="image/mine_gray.png" class="ico">我的活动</a>
+				      </li>
+				      <li role="presentation">
+				        <a role="menuitem" href="#/collection"><img src="image/favorite_gray.png" class="ico">我的收藏</a>
+				      </li>
+				      <li role="presentation">
+				        <a role="menuitem" href="#/history"><img src="image/view_gray.png" class="ico">浏览历史</a>
+				      </li>
+				      <li role="presentation">
+				      	<a role="menuitem" href="#/me"><img src="image/me.png" class="ico">个人资料</a>
+				      </li>
+				      <li role="presentation">
+				        <a role="menuitem" href="#/friends"><img src="image/friends.png" class="ico">我的好友</a>
+				      </li>
+				      <li role="presentation" class="divider"></li>
+				      <li role="presentation">
+				        <a role="menuitem" href="#/service"><img src="image/mail_pink.png" class="ico">我要吐槽</a>
+				      </li>
+				    </ul>
+				</div>
+			</div>
+			<div class="list">
+				<div id="index-item" style="display:none;" class="text-center">
+					<ul role="menu">
+						<li class="current"><a href="#/index" class="menu-item ">最新动态</a></li>
+						<li><a href="#/hotactivity" class="menu-item">热门活动</a></li>
+					</ul>
+				</div>
+				<div id="service-item" style="display:none;" class="text-center">
+					<ul role="menu">
+						
+					</ul>
+				</div>
+				<div id="me-item" style="display:none;" class="text-center">
+					<ul role="menu">
+						<li class="current"><a href="#/achievement" class="menu-item">我的成就</a></li>
+						<li><a href="#/stastic" class="menu-item">我的统计</a></li><br class="visible-xs-block"/>
+						<li><a href="#/rank" class="menu-item">我的排名</a></li>
+						<li><a href="#/profile" class="menu-item">个人资料</a></li>
+						<!--li><a href="#/messages" class="menu-item">我的消息</a></li-->
+					</ul>
+				</div>
+				<div id="activities-item" style="display:none;" class="text-center">
+					<ul role="menu">
+						<li class="activity"><a href="javascript:void(0);" class="menu-item active" id="abouttostart">即将开始</a></li>
+						<li class="activity"><a href="javascript:void(0);" class="menu-item" id="running">正在进行</a></li><br class="visible-xs-block"/>
+						<li class="activity"><a href="javascript:void(0);" class="menu-item" id="finished">已结束</a></li>
+						<li class="activity"><a href="javascript:void(0);" class="menu-item" id="all">全部</a></li>
+					</ul>
+				</div>
+				<div id="friends-item" style="display:none;" class="text-center">
+					<ul role="menu">
+						<li class="friends"><a href="javascript:void(0);" class="menu-item" id="myfriends">我的好友</a></li>
+						<li class="friends"><a href="javascript:void(0);" class="menu-item" id="addfriends">添加好友</a></li><br class="visible-xs-block"/>
+						<li class="friends"><a href="javascript:void(0);" class="menu-item" id="appliedfriends">待处理</a></li>
+						<li class="friends"><a href="javascript:void(0);" class="menu-item" id="applying">申请记录</a></li>
+					</ul>
+				</div>
+			</div>
+			<!--div class="hidden-xs hidden-sm col-md-1 col-lg-1">
+				<a id="message" href="#/messages">
+					<span class="glyphicon glyphicon-envelope"></span>
+					<span class="glyphicon glyphicon-info-sign" id="unreadMessage" style="display:none;"></span>
+				</a> 
+			</div-->
+		</div>
+	</div>
+	<div class="clearfix hidden"></div>
+	<div class="site-body">
+		<div class="site-container" id="main-body"></div>
+	</div>
+	<footer class="site-footer">
+		<div class="site-container">
+			<span>&copy;VolQ志趣游戏化志愿者平台2015</span><br/>
+			有问题请联系我们：<a href="mailto:feedback@volq.org">feedback@volq.org</a>
+		</div>
+	</footer>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body" id="modalContent">
+				</div>
+				<div class="modal-footer visible-xs-block">
+					<button class="btn btn-default" style="width:100%;" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+<script>
+	$(document).ready(function(){
+		validate();
+		main_click_functions();
+		setUI();
+		$('#logout').click(logout);
+		$("#avatar").click(function(){
+			document.location.href="volunteer.html#/profile";
+		});
+	});//end ready function.
+</script>
+<script src="js/jquery.form.js"></script>
+<script src="js/lib/jquery.validate.min.js"></script>
+<script src="js/volunteer/volunteer.request.js"></script>
+<script src="js/volunteer/volunteer.route.js"></script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<title>志趣VolQ_志愿者</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<meta name="Description" content="志趣是一个游戏化的志愿者活动在线平台。通过使参加志愿活动变得像玩游戏一样有趣，让人们更加主动愉快的参与志愿活动；同时提供了一个使用方便的志愿活动管理平台。" />
+    <meta name="Keywords" content="志趣,VOLQ,游戏化,志愿,志愿者,志愿活动" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="icon" href="image/volq.ico" type="image/x-icon" />
+</head>
+<body class="signin">
+	<div class="site-menu">
+		<h1 class="volq">志 趣</h1>
+	</div>
+	<div class="site-body">
+		<div class="container">
+			<div class="regist-form">
+				<div class="row">
+					<div class="col-sm-6 signin-left">
+						<img class="logo" src="image/volq_logo.png"></img>
+						<img src="image/luoli1.jpg" alt="呵呵" id="splash">
+					</div>
+					<div class="col-sm-6">
+						<div class="panel form-body">
+						<form role="form" id="sign-in">
+							<div class="form-group">
+								<label class="title">邮箱</label><span class="warnning">*</span>
+								<input class="form-control" type="text" name="email" id="email" placeholder="请输入邮箱"/>
+							</div>
+							<div class="form-group">
+								<label class="title">密码</label><span class="warnning">*</span>
+								<input class="form-control" type="password" name="password" id="password" placeholder="登陆密码"/>
+							</div>
+							<div class="form-group has-error hidden" id="error">
+								<label class="control-label error-message" ></label>
+							</div>
+							<div class="checkbox">
+								<div class="checkbox">
+									<label><input type="checkbox" id="rememberme">记住我</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="text-center">
+								<input type="button" class="btn btn-danger" value="登录" id="submit"/>
+								<a href="forgot.html" class="pull-left" style="padding:6px 12px;"><span>忘记密码</span></a>
+								<a href="index.html" class="pull-right" style="padding:6px 12px;"><span>注册</span></a>
+								</div>
+							</div>
+						</from>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer class="site-footer">
+		<a href="http://www.volq.org/Static/Mobile/Android/Latest/app-release.apk" target="_blank" onfocus="this.blur();" title="点击下载最新客户端">官方客户端<br class="visible-xs-block"/>
+			<img src="image/qrcode/android.png">
+		</a><br class="visible-xs-block"/>
+		<a href="javascript:void(0);" onfocus="this.blur();">
+		官方微信<br class="visible-xs-block"/>
+			<img src="image/qrcode/wechat.png">
+		</a>
+		<br class="visible-xs-block"/>
+		<div style="display:inline-block;">
+			<span>&copy;VolQ志趣游戏化志愿者平台2015</span><br/>
+			有问题请联系我们：<a href="mailto:feedback@volq.org">feedback@volq.org</a>
+		</div>
+	</footer>
+	<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/lib/stickUp.min.js"></script>
+	<script src="js/my.js"></script>
+	<script>
+	$(document).ready(function(){
+		setTimeout(function() {$(".site-menu").stickUp();}, 500);
+		$("a[href='index.html']").attr("href","index.html"+window.location.hash);
+		$("a[href='forgot.html']").attr("href","forgot.html"+window.location.hash);
+	    randomSplash();
+
+	    $('input:first').focus();
+
+		$('#submit').click(function(){
+			var email=$('#email').val();
+			var error_occured=0;
+			if(email.length==0){
+				$('#error').removeClass('hidden');
+				$('#error label').text("麻烦输入你的账号名!");
+				$('#email').addClass('error');
+				error_occured=1;
+			}
+			var password=$('#password').val();
+			if(password.length==0){
+				$('#error').removeClass('hidden');
+				$('#error label').text("麻烦输入你的密码!");
+				$('#password').addClass('error');
+				error_occured=1;
+			}
+			if(error_occured){
+				return ;
+			}
+			$("#submit").addClass("disabled");
+			var data=$('#sign-in').serializeArray();
+			$.ajax({
+				url: '/api/user/login',
+				type: "post",
+				data: data,
+				success: function(data){
+					$("#submit").removeClass("disabled");
+					var expire=null;
+					if($('#rememberme').is(':checked')==true){
+						expire=7;
+					}
+					if (data.status == "OK") {
+						$.cookie('userid',data.userId+';path=/',expire);
+						//$.cookie('name',data.name+';path=/',expire);
+						$.cookie('token',data.token+';path=/',expire);
+						$.cookie('role',data.role+';path=/',expire);
+						if(window.location.hash)
+						{
+							document.location.href=window.location.hash.substring(1);
+						}
+						else if(data.role=="Volunteer"){
+							document.location.href="volunteer.html";
+						}
+						else if (data.role=="Organizer") {
+							document.location.href="organizer.html";
+						}
+						else if (data.role=="Organization") {
+							document.location.href="organization.html";
+						}
+						else{
+							document.location.href="dashboard.html";
+						};
+					}
+					else if(data.status=="ERROR"){
+						$('#error').removeClass('hidden');
+						$('#error label').text(data.message);
+					}
+					else{
+						$('#error').removeClass('hidden');
+						$('#error label').text(data.message);
+					}
+				},
+				error: function(data){
+					$("#submit").removeClass("disabled");
+					$.cookie('islogged','0',0);
+				}
+			});
+		});
+
+		$('input').focus(function(){
+			$('#error').addClass('hidden');
+			$(this).removeClass('error');
+		});
+	});//end ready
+	$.AutoComplete('#email');
+	$('body').keyup(function(event){
+		if(event.which==13){
+			$('#submit').click();
+		}
+	});
+
+	function randomSplash() {
+	    var n = Math.floor(Math.random()*3)+1;
+	    $('#splash').attr('src', "image/luoli" + n + ".jpg");
+	}
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+.operate span,
+.operate button,
+.operate input {
+	margin-right: 5px;
+}
+.conditioncontent {
+	border: 1px solid #7F8C8D;
+	width: 100%;
+}
+.conditioncontent tr {
+	border-bottom:  1px solid #7F8C8D;
+}
+.conditioncontent .conditions span{
+	background-color: #7F8C8D;
+	color: #ffffff;
+	padding: 5px;
+	margin: 3px 0px 3px 10px;
+}
+.conditioncontent .operate {
+	padding: 10px;
+	width: 300px;
+}
+.conditioncontent .conditions {
+	width: 600px;
+}
+.conditioncontent td>a {
+	font-weight: bold; 
+	color: #000000; 
+	text-decoration:none; 
+	font-size: 20px; 
+}
+.conditioncontent span>a {
+	font-weight: bold; 
+	color: #000000; 
+	text-decoration:none; 
+	font-size: 11px; 
+}
+
+.invalid-input {
+	border: 1px solid red;
+}
+.exitOgn {
+	width: 100%;
+	padding-left: 5px;
+	padding-right: 5px;
+}

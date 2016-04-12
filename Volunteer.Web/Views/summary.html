@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>志趣VolQ_志愿者</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/amplify.min.js"></script>
+		<script src="js/summernote.js"></script>
+		<script src="js/lib/mustache.js"></script>
+		<script src="js/jquery.masonry.min.js"></script>
+		<script src="js/my.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/summernote.css">
+		<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link rel="icon" href="image/volq.ico" type="image/x-icon" />
+	</head>
+	<body>
+		<div class="site-body">
+			<div class="container" id="modalContent">
+				<div class="row activity-detail">
+					<div class="body-left col-sm-8">
+						<div class="detail-title">
+							<h1 id="summaryTitle"></h1>
+							<div id="mainId" style="display:none;"></div>
+							<div class="door pull-right">
+								<a id="homePage" href="javascript:void(0);"><img src="image/home_white.png" class="ico"/></a>
+							</div>
+						</div>
+						<div class="detail-author">
+						 	<a class="organizer-link publish pull-right" href="javascript:void(0);" target="_black" onfocus="this.blur();" style="display:none;">
+								<table>
+									<tr>
+										<td>
+											By：
+										</td>
+										<td>
+											<img class="avatar" alt=""  id="organizerAvatar">
+										</td>
+										<td>
+											<span id="organizerName"></span>
+										</td>
+									</tr>
+								</table>
+							</a>
+						</div>
+						<div class="content-container">
+							<div class="draft" style="display:none;">
+								<h3><b>总结标题</b></h3>
+								<input type="text" class="form-control" name="summaryTitle" value="活动总结">
+							</div>
+							<h3><b>总结正文</b></h3>
+						 	<div class="draft" style="display:none;">
+						 		<div class="summernote" id="content"></div>
+						 		<button id="saveDraft" class="btn btn-default pull-left" style="margin:10px;">保存草稿</button>
+						 		<button id="publishSummary" class="btn btn-default pull-right" style="margin:10px;">发布总结</button>
+						 	</div>
+							<p id="summaryContent" style="min-height:150px;" class="publish" style="display:none;"></p>
+							<div class="publish" style="display:none;">
+								<span style="color:#ff4081;"><b>评论活动</b></span><span id="validNum"></span>
+								<div class="pull-right" id="makeComment" style="display:none;">
+					            	<img class="ico pointer" src="image/comment.png" title="评论活动" onclick="try{makeComment();}catch(err){};">
+					            </div>
+								<div id="isCommentOnComment" style="display:none;">false</div>
+								<div id="fatherCommentId" style="display:none;"></div>
+								<textarea class="form-control" rows="4" onKeyDown="checkLength(this)" onKeyUp="checkLength(this)" onPaste="checkLength(this)" name="newComment" style="margin-top:10px;"></textarea>
+					            <button class="btn btn-default makeComment" style="width:100%;" onclick="try{commitComment(this);}catch(err){};"><img class="ico" src="image/makeComment.png"/>提交评论</button>
+								<div id="comments">
+								</div>
+								<div class="text-center">
+						            <div class="pull-left">
+						                当前页面:
+						                <span id="current_page">1</span>
+						            </div>
+						            <b id="prev" class="pointer" style="color:#3498DB;" onclick="try{prevPage();}catch(err){};">上一页</b>
+						            ||
+						            <b id="next" class="pointer" style="color:#3498DB;" onclick="try{nextPage();}catch(err){};">下一页</b>
+						            <div class="pull-right">
+						                总页数:
+						                <span id="total_page">1</span>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					</div>
+					<div class="body-right col-sm-4">
+						<a class="organization-link" href="#" target="_black" onfocus="this.blur();">
+							<table>
+								<tr>
+									<td>
+										<img class="avatar" alt=""  id="organizationAvatar">
+									</td>
+									<td>
+										<strong id="organizationName"></strong>
+									</td>
+								</tr>
+							</table>
+						</a>
+						<hr class="solid_line">
+						<div style="font-size:18px;margin-top:20px;">
+							活动名称：<a href="javascript:void(0);" style="color:#3498DB;"><b id="activityName"></b></a>
+						</div>
+						<hr class="dotted_line">
+						<div style="height:50px;">
+							<b style="color:#ff4081;font-size:40px;margin-left:30px;" class="pull-left"><span id="rating">0</span><sup>'</sup></b>
+							<div class="pull-left" style="height:40px;margin:10px 10px 0 10px;">
+								<div class="rating">
+									<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="一星">
+									<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="二星">
+									<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="三星">
+									<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="四星">
+									<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="五星">
+								</div>
+								（已有<span id="ratedNumber"></span>人对此活动评分）
+							</div>
+						</div>
+						<div class="clearfix"></div>
+						<hr class="dotted_line">
+						<strong>完成奖励：</strong><span id="point"></span><br>
+						<div><strong>注册时间:</strong><br/></div>
+						<div class="time">
+							<span class="glyphicon glyphicon-play ico"></span>&nbsp;<span id="openSignInTime" class="time-block"></span>
+						</div>
+						<div class="time">
+						<span class="glyphicon glyphicon-stop ico"></span>&nbsp;<span id="closeSignInTime" class="time-block"></span><br/>
+						</div>
+						<strong>活动时间:</strong><br/>
+						<div class="time">
+						<span class="glyphicon glyphicon-play ico"></span>&nbsp;<span id="startTime" class="time-block"></span>
+						</div>
+						<div class="time">
+						<span class="glyphicon glyphicon-stop ico"></span>&nbsp;<span id="finishTime" class="time-block"></span>
+						</div>
+						<strong>活动地点:</strong>
+						<span id="location"></span>
+						<hr class="dotted_line">
+						<div>
+							<img class="ico" src="image/view_gray.png"/><strong>查看次数：</strong><span id="viewedTime"></span><br/>
+						</div>
+						<div>
+							<img class="ico" src="image/favorite_gray.png"/><strong>收藏次数：</strong><span id="favoritedTime"></span><br/>
+						</div>
+						<div>
+							<img class="ico" src="image/signin_gray.png"/><strong>参加人数：</strong><span id="hasSignedInVolunteerNumber"></span><br/>
+						</div>
+						<hr class="solid_line">
+						<div style="display:none;">
+							<strong>已报名志愿者：</strong>
+							<ol id="hasSignedinVolunteers"></ol>
+						</div>
+						<div style="padding-bottom: 15px;" class="publish">
+							<div>分享给朋友
+								<img class="ico pointer" src="image/share_pink.png" onclick="try{$('.share').slideToggle();}catch(err){};"/>
+								<img src="image/duplicate.png" class="ico pull-right pointer share" title="复制链接" onclick="try{copyShareLink();}catch(err){};" style="display:none;">
+								<input type="text" name="shareLink" class="form-control share" style="display:none;">
+							</div>
+						</div>
+					</div>
+					<script type="x-tmpl-mustache" id="comments_tmpl">
+					    {{#comments}}
+					    <div class="comment">
+					        <span style="display:none;" class="Id">{{Id}}</span>
+					        <span style="display:none;" class="UserId">{{UserId}}</span>
+					        <div class="head">
+					        	<a href="{{Link}}" target="_blank">{{UserName}}</a>
+					        	({{Status}})
+					        	<div class="pull-right">
+					        		<img class="pointer" src="image/reply.png" style="width:15px;" title="回复" onclick="try{replyComment(this);}catch(err){};"><span>{{Position}}楼</span>
+					        	</div>
+					        </div>
+				        	<a href="{{Link}}" target="_blank" class="pull-left">
+				        		<img src="{{Avatar}}" alt="" class="avatar">
+				        	</a>
+				            <div class="content">
+				                <p>{{Content}}</p>
+				            </div>
+				            <div class="pull-right time">
+				        		<span>{{Time}}</span>
+				        	</div>
+					    </div>
+					    {{/comments}}
+					</script>
+					<script type="x-tmpl-mustache" id="volunteer_tmpl">
+						<li>
+							<a href="visitor.html?id={{id}}" target="_blank" style="color:#3498DB;"><b>{{name}}</b></a>
+							<span class='pull-right'>{{levelName}}</span>
+						</li>
+					</script>
+				</div>
+			</div>
+		</div>
+		<footer class="site-footer">
+			<a href="http://www.volq.org/Static/Mobile/Android/Latest/app-release.apk" target="_blank" onfocus="this.blur();" title="点击下载最新客户端">官方客户端<br class="visible-xs-block"/>
+				<img src="image/qrcode/android.png">
+			</a><br class="visible-xs-block"/>
+			<a href="javascript:void(0);" onfocus="this.blur();">
+			官方微信<br class="visible-xs-block"/>
+				<img src="image/qrcode/wechat.png">
+			</a>
+			<br class="visible-xs-block"/>
+			<div style="display:inline-block;">
+				<span>&copy;VolQ志趣游戏化志愿者平台2015</span><br/>
+				有问题请联系我们：<a href="mailto:feedback@volq.org">feedback@volq.org</a>
+			</div>
+		</footer>
+	</body>
+	<script src="js/summary/summary.request.js"></script>
+	<script src="js/summary/summary.js"></script>
+</html>

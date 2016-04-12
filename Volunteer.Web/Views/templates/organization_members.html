@@ -1,0 +1,222 @@
+<div class="gap clearfix"></div>
+<div class="members-content masonry">
+</div>
+<div class="modal fade" id="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4>验证信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-2 text-right" style="padding-top: 8px;">
+                        <label>信息</label>
+                    </div>
+                    <div class="col-sm-10">
+                        <input type="text" placeholder="请输入验证信息" class="form-control" name="comment">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+                <button type="button" class="btn btn-primary" id="sure">sure</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="go-top text-center">
+    <img src="image/backtotop.png" alt="" style="width:100%; height=100%; ">
+</div>
+<script id="members" type="x-tmpl-mustache">
+    {{#data}}
+    <div class="person box w0" id="{{organizerId}}" href="visitor.html?id={{organizerId}}">
+        <div class="item_head">
+            <img class="item_avatar" src="{{avatar.AvatarPath}}" alt="">
+            <div class="operate">
+                {{#appliedme}}
+                    <a href="javascript:void(0);" class="friend accept" title="同意申请">
+                        <span class="glyphicon glyphicon-ok-sign"></span>
+                    </a>
+                    <a href="javascript:void(0);" class="friend refuse" title="拒绝申请">
+                        <span class="glyphicon glyphicon-ban-circle"></span>
+                    </a>
+                {{/appliedme}}
+                {{#remove}}
+                    <a href="javascript:void(0);" class="friend fire" title="删除成员">
+                        <span class="glyphicon glyphicon-remove-sign"></span>
+                    </a>
+                {{/remove}}
+                {{#myapplyes}}
+                    <a href="javascript:void(0);">
+                        <span class="glyphicon glyphicon-bullhorn"></span>{{status}}
+                    </a>
+                {{/myapplyes}}
+            </div>
+        </div>
+        <div>
+            <h5 class="name text-center"><b>{{organizerName}}</b></h5>
+            <p class="person-intro text remove hide">{{description}}</p>
+            {{#comment}}
+                <p class="text remove hide">附加信息：{{Comment}}</p>
+            {{/comment}}
+            {{#Time}}
+                <p class="text remove hide">申请时间：{{Time}}</p>
+            {{/Time}}
+        </div>
+    </div>
+    {{/data}}
+</script>
+<script>
+    $(function(){
+        var loading = true;
+        var members_container = $(".members-content");
+        function init(mode, data) {
+            var tmpl = $("#members").html();
+            Mustache.parse(tmpl);
+            members_container.data("pageIndex", data.pageIndex);
+            amplify.request({
+                resourceId: mode,
+                data: data,
+                success: function (data) {
+                    for (var i = data.length - 1; i >= 0; i--) {
+                        if (typeof data[i].time !== "undefined") {
+                            data[i].Time = time_change(data[i].time);
+                        }
+                        else if (typeof data[i].Time !== "undefined") {
+                            data[i].Time = time_change(data[i].Time);
+                        }
+                        if (mode === "members") {
+                            data[i].remove = true;
+                        } else if (mode === "applied") {
+                            data[i].appliedme = true;
+                        }
+                    };
+                    if (data.length === 0) {
+                        members_container.data("pageMax", members_container.data("pageIndex"));
+                    }
+                    var rendered = Mustache.render(tmpl, {"data": data});
+                    $(".members-content").append(rendered);
+                    loading = false;
+                },
+                error: function () {
+
+                }
+            });
+        }
+        bindEvent();
+    
+        function bindEvent() {
+            $(".members-content").on("click", "a.friend", function (event) {
+                var elem = $(this);
+                var elem_tr = $(this).parents(".person");
+                var id = elem_tr.attr("id");
+                var resource = "";
+                if ($(this).hasClass("fire")) {
+                    resource = "remove";
+                }
+                if ($(this).hasClass("accept")) {
+                    resource = "accept";
+                }
+                if ($(this).hasClass("refuse")) {
+                    resource = "refuse";
+                }
+                $("#modal").modal("show");
+                $("#modal").data("id", id);
+                $("#modal").data("resource", resource);
+                $("#modal").data("sourceElem", elem);
+            });
+            $("#modal #sure").bind("click", function (event) {
+                var comment = $("#modal input[name='comment']").val();
+                var modal = $("#modal");
+                var data = {"id": modal.data("id"), "comment": comment};
+                var elem = $(".person").filter("[id='"+ data.id +"']");
+                $("#modal").modal("hide");
+                amplify.request({
+                    resourceId: modal.data("resource"),
+                    data: data,
+                    success: function () {
+                        success_callback(modal.data("resource"), elem);
+                    },
+                    error: member_error(elem)
+                });
+                function success_callback(resource, elem) {
+                    switch (resource) {
+                        case "remove":
+                        case "refuse":
+                            elem.remove();
+                            break;
+                        case "accept":
+                            elem.remove();
+                            break;
+                    }
+                }
+                function member_error(elem) {
+                    if (elem.hasClass("btn-primary")) {
+                        return function() {
+                            alert("操作失败");
+                        }
+                    };
+                };
+            });
+            $(".members-content").on("mouseenter", ".person", function () {
+                $(this).find(".hide").removeClass("hide");
+            }).on("mouseleave", ".person", function () {
+                $(this).find(".remove").addClass("hide");
+            });
+        }
+        $("li.members>a").click(function () {
+            activeList($(this), "ul", "active");
+            $(".members-content").empty();
+            slide($(".members-content"));
+            members_container.removeData("pageMax");
+            var resource = null;
+            if ($(this).attr("id") === "mymembers") {
+                resource = "members";
+            }
+            else if ($(this).attr("id") === "applyingmembers") {
+                resource = "applied";
+            }
+            if (resource != null) {
+               init(resource, {"pageIndex": 1});
+           }
+        });
+        $("li.members:first>a").click();
+        // $(".members-content").on("click",".person", function () {
+        //     location.assign($(this).attr("href"));
+        // });
+        $(window).unbind("scroll").scroll(function () {
+            var a = document.documentElement.scrollTop==0? document.body.clientHeight : document.documentElement.clientHeight;
+            var b = document.documentElement.scrollTop==0? document.body.scrollTop : document.documentElement.scrollTop;
+            var c = document.documentElement.scrollTop==0? document.body.scrollHeight : document.documentElement.scrollHeight;
+            if (b > 100 ) {
+                $(".go-top").show();
+            }
+            else {
+                $(".go-top").hide();
+            }
+            if ( a + b === c && loading === false) {
+                var index = members_container.data("pageIndex");
+                var max = members_container.data("pageMax");
+                var id  = $("#members-item a.active").attr("id");
+                if (id === "mymembers") {
+                    var resource = "members";
+                }
+                else if (id === "applyingmembers") {
+                    var resource = "members";
+                }
+                if (resource) {
+                    if (typeof max === "undefined" || index < max) {
+                        loading = true;
+                        init(resource, {"pageIndex": index + 1});
+                    }
+                }
+            }
+        });
+        $(".go-top").bind("click", function (event) {
+            $("html, body").animate({scrollTop: 0}, 100);
+        });
+    });
+</script>

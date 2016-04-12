@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>志趣VolQ_志愿者</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/my.js"></script>
+	<link rel="icon" href="image/volq.ico" type="image/x-icon" />
+</head>
+<body>
+	<div class="site-body">
+		<div class="container">
+			<div class="regist-form">
+				<div class="row">
+					<div class="col-sm-6 signin-left">
+						<img class="logo" src="image/volq_logo.png"></img>
+						<img src="image/luoli1.jpg" alt="呵呵" id="splash">
+					</div>
+					<div class="col-sm-6">
+						<div class="panel form-body">
+							<form role="form" id="forgot">
+								<div class="form-group">
+									<label class="title" for="email">注册邮箱</label><span class="warnning">*</span>
+									<input type="text" name="email" id="email" class="form-control" placeholder="输入注册邮箱">
+								</div>
+								<div class="form-group">
+									<label class="title" for="validate">验证码</label><span class="warnning">*</span>
+									<table style="width:100%;">
+										<tr>
+											<td>
+												<input class="form-control" type="text" name="validateCode" id="validateCode" placeholder="请输入验证码">
+											</td>
+											<td>
+												<input type="hidden" name="id">
+												<img id="validateImage" class="pull-right" src="data:image/gif;base64,R0lGODlhAgACAIAAAP///wAAACwAAAAAAgACAAACAoRRADs="/>
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="form-group">
+									<div class="text-center">
+									<button type="submit" class="btn btn-primary">提交</button>
+									<a href="signin.html" class="pull-left" style="padding:6px 12px;"><span>登录</span></a>
+									<a href="index.html" class="pull-right" style="padding:6px 12px;"><span>注册</span></a>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="alert alert-danger" role="alert" style="display: none;">
+										未查证的电子邮箱或者验证码错误
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span>
+						<span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title">找回密码</h4>
+				</div>
+				<div class="modal-body">
+					<p>邮件已发送，请查收</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer class="site-footer">
+		<a href="http://www.volq.org/Static/Mobile/Android/Latest/app-release.apk" target="_blank" onfocus="this.blur();" title="点击下载最新客户端">官方客户端<br class="visible-xs-block"/>
+			<img src="image/qrcode/android.png">
+		</a><br class="visible-xs-block"/>
+		<a href="javascript:void(0);" onfocus="this.blur();">
+		官方微信<br class="visible-xs-block"/>
+			<img src="image/qrcode/wechat.png">
+		</a>
+		<br class="visible-xs-block"/>
+		<div style="display:inline-block;">
+			<span>&copy;VolQ志趣游戏化志愿者平台2015</span><br/>
+			有问题请联系我们：<a href="mailto:feedback@volq.org">feedback@volq.org</a>
+		</div>
+	</footer>
+	<script>
+	$(function() {
+		$("a[href='index.html']").attr("href","index.html"+window.location.hash);
+		$("a[href='signin.html']").attr("href","signin.html"+window.location.hash);
+		randomSplash();
+		$.ajax({
+	    	url: "/api/user/ValidateImage",
+	    	type: "get",
+	    	success: function (data) {
+	    		$("#validateImage").attr("src","data:image/gif;base64,"+data.image);
+	    		$("input[name='id']").val(data.id);
+	    	},
+	    	error: function () {
+	    		$('table tbody').html("<h3>发生未知错误</h3>");
+	    	}
+	    });
+		$.AutoComplete("#email");
+		$("#validateImage").bind("click", function (){
+			$.ajax({
+		    	url: "/api/user/ValidateImage",
+		    	type: "get",
+		    	success: function (data) {
+		    		$("#validateImage").attr("src","data:image/gif;base64,"+data.image);
+		    		$("input[name='id']").val(data.id);
+		    	},
+		    	error: function () {
+		    		$('table tbody').html("<h3>发生未知错误</h3>");
+		    	}
+		    });
+		});
+
+		$("#modal button").click(function () {
+			window.location.href = "signin.html";
+		});
+
+		$("#forgot").submit(function (event) {
+			event.preventDefault();
+			if($("#validateCode").val()==="" || $("#email").val()==="")
+			{
+				return;
+			}
+			$("#forgot :submit").addClass("disabled");
+			$.ajax({
+				url: "/api/user/requestpasswordreset",
+				type: "post",
+				data: $("form").serialize(),
+				success: function () {
+					$("#modal").modal();
+				},
+				error: function () {
+					$("form .alert").fadeIn(function() {
+						setTimeout(function () {
+							$("form .alert").fadeOut();
+						}, 2000);
+					});
+				}
+			});
+		});
+		function randomSplash() {
+		    var n = Math.floor(Math.random()*3)+1;
+		    $('#splash').attr('src', "image/luoli" + n + ".jpg");
+		}
+	});
+	</script>
+</body>
+</html>

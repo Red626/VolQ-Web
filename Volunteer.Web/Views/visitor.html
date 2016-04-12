@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>志趣VolQ_志愿者</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/lib/stickUp.min.js"></script>
+		<script src="js/amplify.min.js"></script>
+		<script src="js/my.js"></script>
+		<script src="js/lib/mustache.js"></script>
+		<script src="js/jquery.masonry.min.js"></script>
+		<script src="js/jquery.easing.min.js"></script>
+		<script src="js/jquery.zaccordion.js"></script>
+		<script src="js/summernote.min.js"></script>
+		<script src="js/sammy-latest.min.js"></script>
+		<script src="js/lib/jquery-ui.autocomplete.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="icon" href="image/volq.ico" type="image/x-icon" />
+	</head>
+	<body>
+		<div class="site-header">
+			<div class="row">
+				<div class="col-xs-10">
+					<div id="avatar" class="pull-left">
+						<img class="avatar img-responsive" alt="">
+					</div>
+					<div class="pull-left">
+						<h3 class="name"></h3>
+						<span class="roleName"></span>
+						<h5 class="description"></h5>
+					</div>
+				</div>
+				<div class="col-xs-2 friends text-center">
+					<a id="appllyFriend" class="confirm " href="javascript:void(0);" style="display:none;">
+						<span class="glyphicon glyphicon-plus-sign" title="申请好友"></span>
+						<span class="hidden-xs">申请好友</span>
+					</a>
+					<a id="breakFriend" href="javascript:void(0);" style="display:none;" title="解除好友">
+						<span class="glyphicon glyphicon-remove-sign"></span>
+						<span class="hidden-xs">解除好友</span>
+					</a>
+					<a id="acceptFriend" href="javascript:void(0);" style="display:none;" title="同意申请">
+						<span class="glyphicon glyphicon-ok-sign"></span>
+						<span class="hidden-xs">同意申请</span>
+					</a><br/>
+					<a id="refuseFriend" href="javascript:void(0);" style="display:none;" title="拒绝申请">
+						<span class="glyphicon glyphicon-ban-circle"></span>
+						<span class="hidden-xs">拒绝申请</span>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="site-menu">
+			<div class="not-logged text-right">
+				<a href="signin.html"><button class="btn btn-default">注册/登陆</button></a>
+			</div>
+			<div class="logged hidden">
+				<div class="pull-left">
+					<div class="dropdown">
+						<div id="menu">
+							<a role="menuitem" class="myhome" href="javascript:void(0);"><button class="btn btn-default"><img src="image/home_black.png" style="width:15px;" title="返回我的首页">返回首页</button></a>
+						</div>
+					</div>
+				</div>
+				<div class="list">
+					<div id="organization-item" style="display:none;" class="text-center">
+						<ul role="menu">
+							<li class="organization"><a href="#/profile" class="menu-item" id="organizationProfile">资料</a></li>
+							<li class="organization"><a href="#/activity" class="menu-item" id="organizationActivity">活动</a></li>
+						</ul>
+					</div>
+					<div id="volunteer-item" style="display:none;" class="text-center">
+						<ul role="menu">
+							<li class="volunteer"><a href="#/profile" class="menu-item active" id="volunteerProfile">资料</a></li>
+							<li class="volunteer"><a href="#/feeds" class="menu-item" id="volunteerFeeds">新鲜事</a></li><br class="visible-xs-block"/>
+							<li class="volunteer"><a href="#/achievement" class="menu-item" id="volunteerAchievement">成就</a></li>
+							<li class="volunteer"><a href="#/activity" class="menu-item" id="volunteerActivity">活动</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="site-body">
+            <div class="container">
+	            <div class="profile">
+					<div id="volunteer" class="masonry" style="display:none;">
+						<div class="box top3" id="profile">
+							<fieldset >
+								<legend>基本信息</legend>
+								<div class="content">
+									<p>
+										<span>姓名:</span>
+										<span class="name"></span> 
+									</p>
+									<p>
+										<span>角色:</span>
+										<span class="roleName"></span>
+									</p>
+									<p>
+										<span>注册邮箱:</span>
+										<span class="email"></span>
+									</p>
+									<p>
+										<span>从属组织:</span>
+										<span class="affiliation"></span>
+									</p>
+									<p>
+										<span>个性签名:</span> 
+										<span class="description"></span>
+									</p>
+								</div>
+							</fieldset>
+						</div>
+						<div class="box top4" id="growth">
+							<fieldset >
+								<legend>成长</legend>
+								<div class="content">
+									<p>
+										<span>等级:</span>
+										<span class="levelName"></span><br/>
+									</p>
+									<p>
+										目前级别：<strong id="levelName"></strong><img class="levelPicture"/><span class="level"></span>
+									</p>
+									<p>
+										分数：<span class="point"></span>(升到下一级还需<span class="pointsToNextLevel"></span>分)
+									</p>
+									<p>
+										参加活动：<span class="signedInActivityNumber"></span>
+									</p>
+									<p>
+										完成率：<span class="completeRate"></span>
+									</p>
+								</div>
+							</fieldset>
+						</div>
+						<div class="box w1 top5" id="location">
+							<fieldset>
+								<legend>地理信息</legend>
+								<img class="map" id="locationmap" style="margin:20px"/>
+							</fieldset>
+						</div>
+						<div class="box top6" id="property">
+							<fieldset>
+								<legend>属性成长</legend>
+								<div class="content">
+									<canvas id="myProperty" width="250" height="250"></canvas>
+								</div>
+							</fieldset>
+						</div>
+					</div>
+					<div id="organization" style="display:none;">
+		            </div>
+				</div>
+				<div class="feeds">
+				</div>
+				<div class="achievements"></div>
+				<div class="activity">
+					<div id="related_content">
+						<div class="hots">
+							<div class="masonry" id="hot_activity">
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+		</div>
+		<footer class="site-footer">
+			<span>&copy;VolQ志趣游戏化志愿者平台2015</span><br/>
+			有问题请联系我们：<a href="mailto:feedback@volq.org">feedback@volq.org</a>
+		</footer>
+		<div class="modal fade" id="add_firend_info">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+						<h4>附加信息</h4>
+					</div>
+					<div class="modal-body">
+						<input type="text" placeholder="请输入信息内容" class="form-control" name="comment" val="">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+						<button type="button" class="btn btn-primary" id="sure">sure</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body" id="modalContent">
+					</div>
+					<div class="modal-footer visible-xs-block">
+						<button class="btn btn-default" style="width:100%;" data-dismiss="modal">关闭</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="x-tmpl-mustache" id="feeds">
+		<div class="box {{width}}">
+			<span style="display:none;">{{id}}</span>
+			<div class="head">
+				<div class="logo pull-left"><img alt="^_^" src="{{avatar}}"></div>
+				<a clas="name" href="{{visitor}}" target={{target}}>{{name}}</a>
+				<span class="autograph">{{autograph}}</span>
+				<div class="pull-right remove">
+					<span class="glyphicon glyphicon-remove-circle"></span>
+				</div>
+			</div>
+			<div class="pictures">
+				{{#Pictures}}
+					<img src={{.}} alt="^_^">
+				{{/Pictures}}
+			</div>
+			<div class="text">
+				<span style="display:none;">{{destinationLink}}</span>
+				<strong class="title">{{title}}</strong>
+				<p class="content">{{content}}</p>
+			</div>
+			<div class="time">Time:{{time}}</div>
+		</div>
+	</script>
+	<script type="x-tmpl-mustache" id="activity_tmpl">
+		{{#activities}}
+		<div class="hot_activity_item box" id="{{Id}}">
+			<div class="item_photo top-round" style="background: url('{{Cover}}') no-repeat scroll 0% 0% / 270px auto transparent;">
+				<div class="status">{{Status}}</div>
+			</div>
+			<div>
+				<b class="hot_item_title title">{{Name}}</b>
+				<div class="pull-right text">
+					点数:<strong class="point">{{Point}}</strong>
+				</div>
+			</div>
+			<div class="content fix-height">
+				<p class="text">
+					组织方:
+					<span class="OrganizationName text">{{OrganizationName}}</span><br/>
+					时间:
+					<span class="starttime">{{StartTime}}</span><br/>
+					地点:
+					<span class="location">{{Location}}</span>
+				</p>
+			</div>
+			<div class="bar">
+				<div class="bar_item pull-left">
+					<img src="{{ViewedImage}}">
+					<b class="viewtimes">{{VolunteerViewedTime}}</b>
+				</div>
+				<div class="bar_item pull-left">
+					<img src="{{FavoritedImage}}">
+					<b class="favoritetimes">{{VolunteerFavoritedTime}}</b>
+				</div>
+				<div class="bar_item pull-left">
+					<img src="{{SigninedImage}}">
+					<b class="signintimes">{{HasSignedInVolunteerNumber}}</b>
+				</div>
+			</div>
+		</div>
+		{{/activities}}
+	</script>
+	<script src="js/visitor/visitor.request.js"></script>
+	<script src="js/visitor/visitor.js"></script>
+</html>

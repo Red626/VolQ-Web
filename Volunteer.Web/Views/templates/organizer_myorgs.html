@@ -1,0 +1,452 @@
+<div class="clearfix"></div>
+<div class="organizations-content">
+	<div class="organization-stastic masonry">
+		<div class="box w4 top4">
+			<fieldset>
+				<legend>组织分数</legend>
+				<div class="content">
+					<table class="table table-condensed table-hover">
+						<thead>
+							<tr>
+								<th>组织名称</th>
+								<th>本月分配数额</th>
+								<th>本月消耗</th>
+								<th>本月余额</th>
+								<th>分数总消耗</th>
+							</tr>
+						</thead>
+						<tbody  id="pointStatistics">
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+		</div>
+		<div class="box w4 top7">
+			<fieldset>
+				<legend>组织活动</legend>
+				<div class="content">
+					<table class="table table-condensed table-hover">
+						<thead>
+							<tr>
+								<th>组织名称</th>
+								<th>总活动数</th>
+								<th>总参加人数</th>
+								<th>平均每次活动人数</th>
+							</tr>
+						</thead>
+						<tbody id="activityStatistics">
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	<div class="my-organizations masonry" style="display: none;">
+	</div>
+	<div class="apply-organization" style="display: none;">
+		<div class="filter">
+			<div class="friend-search filter-search">
+				<div class="search row">
+					<form class="form-inline">
+						<div class="form-group title">
+							<label style="color:white;">搜索组织:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+						</div>
+						<div class="col-sm-6" style="padding-right: 10px;">
+							<input type="text" name="search" class="form-control" style="width:97%;">
+						</div>
+						<div class="form-group col-sm-2 btn_group">
+							<button type="button" class="btn btn-default form-control">
+								<img src="image/search.png" class="ico">
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="gap clearfix"></div>
+		<div class="organization-results masonry">
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="add_organization_info">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
+				<h4>验证信息</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-2 text-right" style="padding-top: 8px;">
+						<label>信息</label>
+					</div>
+					<div class="col-sm-10">
+						<input type="text" placeholder="请输入验证信息" class="form-control" name="comment">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+				<button type="button" class="btn btn-primary" id="sure">sure</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="x-tmpl-mustache" id="ogn_point">
+	{{#data}}
+	<tr data='{{OrganizationId}}'>
+		<td>
+			{{OrganizationName}}
+		</td>
+		<td>
+			{{TotalPointThisMonth}}
+		</td>
+		<td>
+			{{ConsumePointThisMonth}}
+		</td>
+		<td>
+			{{RemainPointThisMonth}}
+		</td>
+		<td>
+			{{TotalConsumePoint}}
+		</td>
+	</tr>
+	{{/data}}
+</script>
+<script type="x-tmpl-mustache" id="ogn_activity">
+	{{#data}}
+	<tr data='{{OrganizationId}}'>
+		<td>
+			{{OrganizationName}}
+		</td>
+		<td>
+			{{AllActivityCount}}
+		</td>
+		<td>
+			{{AllVolunteerCount}}
+		</td>
+		<td>
+			{{VolunteerCountPerActivity}}
+		</td>
+	</tr>
+	{{/data}}
+</script>
+<script type="x-tmpl-mustache" id="ogn_property">
+	{{#data}}
+	<div class="box top9 property" id="{{OrganizationId}}">
+		<fieldset>
+			<legend>{{OrganizationName}}</legend>
+			<div class="content">
+				<canvas class="hexagram" width="250" height="250"></canvas>
+			</div>
+		</fieldset>
+	</div>
+	{{/data}}
+</script>
+<script type="x-tmpl-mustache" id="join-ogns">
+	{{#data}}
+	<div class="person box w0" id="{{id}}">
+		<div class="item_head">
+			<a href="visitor.html?id={{id}}" target="_blank">
+				<img class="item_avatar" src="{{avatar.AvatarPath}}" alt="">
+			</a>
+			<div class="operate">
+				{{#add}}
+					<a href="javascript:void(0);" class="apppllyOgn" title="申请加入">
+						<span class="glyphicon glyphicon-plus-sign"></span>
+					</a>
+				{{/add}}
+				{{#remove}}
+					<a href="javascript:void(0);" class="exitOgn" title="退出组织">
+						<span class="glyphicon glyphicon-remove-sign"></span>
+					</a>
+				{{/remove}}
+				{{#myapplyes}}
+					<a href="javascript:void(0);">
+						<span class="glyphicon glyphicon-bullhorn"></span>{{status}}
+					</a>
+				{{/myapplyes}}
+			</div>
+		</div>
+		<h5 class="text-center">
+			<a href="visitor.html?id={{id}}" target="_blank" class="name"><b>{{name}}</b></a>
+		</h5>
+		<p class="ogn-intro text remove hide">{{description}}</p>
+	</div>
+	{{/data}}
+</script>
+<script type="x-tmpl-mustache" id="ogn_applied">
+	{{#data}}
+		<div class="box w4 {{side}} friendrank">
+	        <table class="content">
+	            <tr>
+	                <td>
+	                    <div class="friendavatar">
+	                        <a href="{{link}}" target="_self">
+	                            <img src="{{avatar.AvatarPath}}" alt="">
+	                        </a>
+	                    </div>
+	                </td>
+	                <td class="friendcontent">
+	                    <div class="name">
+	                        <a href="{{link}}" target="_self">{{organizationName}}</a>&nbsp;
+	                        <span class="status">{{status}}</span>
+	                    </div>
+	                    <p>
+	                        附加信息：<span>{{comment}}</span>&nbsp;&nbsp;&nbsp;<br class="visible-xs-block"/>
+	                        申请时间：<span>{{applyTime}}</span>&nbsp;&nbsp;&nbsp;<br class="visible-xs-block"/>
+	                        操作时间：<span>{{actionTime}}</span>
+	                    </p>
+	                </td>
+	            </tr>
+	        </table>
+	    </div>
+	{{/data}}
+</script>
+<script>
+	(function () {
+		$(function () {
+			var callbacks = $.Callbacks();
+
+			function bindEvents () {
+				$(".organizations-content").on("click", ".person a", function (event) {
+					var id = $(this).parents(".person").attr("id");
+					$("#add_organization_info").data("id", id);
+					var mode = $("li.organizations>a.active").attr("id");
+					callbacks.empty();
+					if (mode === "applyOrganization") {
+						callbacks.add(function (elem) {
+							return function (status) {
+								if (status) {
+									elem.text("等待回复").prop("disabled", "true");
+								}
+							}
+						}($(this)));
+					}
+					else if (mode === "myOrganization"){
+						callbacks.add(function (elem) {
+							return function (status) {
+								if (status) {
+									elem.text("已退出").prop("disabled", "true");
+									elem.parent().addClass("removed");
+								}
+							}
+						}($(this)));
+					}
+					$("#add_organization_info").modal("show");
+				});
+
+				$("#add_organization_info #sure").on("click", function (event) {
+					var id = $("#add_organization_info").data("id");
+					var comment = $("#add_organization_info input[name='comment']").val();
+					$("#add_organization_info").modal("hide");
+					var mode = $("li.organizations>a.active").attr("id");
+					if (mode === "applyOrganization") {
+						amplify.request({
+							resourceId: "join",
+							data: {"id": id, "comment": comment},
+							success: function () {
+								callbacks.fire(true);
+							}
+						});
+					} 
+					else if (mode === "myOrganization") {
+						console.log(id);
+						amplify.request({
+							resourceId: "quitogn",
+							data: {"id": id},
+							success: function () {
+								callbacks.fire(true);
+							}
+						});
+						callbacks.fire(true);
+					}
+					callbacks.fire(id, comment);
+				});
+
+				$(".organization-results").on("mouseenter", ".person", function () {
+					$(this).find(".hide").removeClass("hide");
+				}).on("mouseleave", ".person", function () {
+					$(this).find(".remove").addClass("hide");
+				});
+
+				$(".search button").click(function (event) {
+					console.log("###");
+				});
+			}
+
+			$("li.organizations>a").off().click(function () {
+				activeList($(this), "ul", "active");
+				$(".organization-results").empty();
+				$("#search").val("");
+				slide($(".organizations-content"));
+				var resource = null;
+				if ($(this).attr("id") === "organizationStastic") {
+					show_organizationStastic();
+				}
+				else if ($(this).attr("id") === "myOrganization") {
+					show_myOrganization();
+				}
+				else if ($(this).attr("id") === "applyOrganization") {
+					show_applyOrganization();
+				}
+				else if ($(this).attr("id") === "myApplys") {
+					show_myApplys();
+				}
+				return;
+			});
+			bindEvents();
+			$("li.organizations:first>a").click();
+
+			function translate_applied_status(status_code) {
+				var status = "";
+				switch (status_code) {
+					case 0:
+						status = "正在申请";
+						break;
+					case 1:
+						status = "已经接受";
+						break;
+					case 2: 
+						status = "被拒绝";
+						break;
+					case 3:
+						status = "被踢了";
+						break;
+					case 4:
+						status = "主动退出";
+						break;
+				}
+				return status;
+			}
+			function show_organizationStastic() {
+				showOne($(".organization-stastic"));
+				$("#pointStatistics").empty();
+				$("#activityStatistics").empty();
+				$(".organization-stastic .property").remove();
+				amplify.request({
+					resourceId: "ogn_be_in",
+					success: function (data) {
+						
+						for (var i = data.length - 1; i >= 0; i--) {
+							amplify.request({
+								resourceId: "statistics",
+								data: {id: data[i].id},
+								success: function (data) {
+									return function (statistics) {
+										var dateArray=[];
+										var consumePointPerMonth=[];
+										var remainPointPerMonth=[];
+										var participantNumPerMonth=[];
+										var totalConsumePoint=0;
+										var totalActivityNum=0;
+										var totalParticipantNum=0;
+										var strength=0;
+										var intelligence=0;
+										var endurance=0;
+										var compassion=0;
+										var sacrifice=0;
+										for(var j=0;j<statistics.StatisticsPerMonth.length;j++)
+										{
+											var date=new Date(statistics.StatisticsPerMonth[j].Date);
+											dateArray.push(date.getFullYear()+"."+date.getMonth());
+											consumePointPerMonth.push(statistics.StatisticsPerMonth[j].ConsumePoint);
+											remainPointPerMonth.push(statistics.StatisticsPerMonth[j].RemainPoint);
+											participantNumPerMonth.push(statistics.StatisticsPerMonth[j].VolunteerCount);
+											strength=strength+statistics.StatisticsPerMonth[j].HexagramProperty.Strength;
+											intelligence=intelligence+statistics.StatisticsPerMonth[j].HexagramProperty.Intelligence
+											endurance=endurance+statistics.StatisticsPerMonth[j].HexagramProperty.Endurance;
+											compassion=compassion+statistics.StatisticsPerMonth[j].HexagramProperty.Compassion;
+											sacrifice=sacrifice+statistics.StatisticsPerMonth[j].HexagramProperty.Sacrifice;
+										}
+										var template = $("#ogn_point").html();
+										var rendered = Mustache.render(template, {"data": {
+												OrganizationId : data.id,
+												OrganizationName : data.name,
+												TotalPointThisMonth : statistics.TotalPointEachMonth,
+												ConsumePointThisMonth : statistics.TotalPointEachMonth-statistics.RemainingSum,
+												RemainPointThisMonth : statistics.RemainingSum,
+												TotalConsumePoint : statistics.ConsumeAllPoint
+										}});
+										$("#pointStatistics").append(rendered);
+
+										var template = $("#ogn_activity").html();
+										var rendered = Mustache.render(template, {"data": {
+												OrganizationId : data.id,
+												OrganizationName : data.name,
+												AllActivityCount : statistics.AllActivityCount,
+												AllVolunteerCount : statistics.AllVolunteerCount,
+												VolunteerCountPerActivity : statistics.AllVolunteerCount/statistics.AllActivityCount
+										}});
+										$("#activityStatistics").append(rendered);
+
+										var template = $("#ogn_property").html();
+										var rendered = Mustache.render(template, {"data": {
+												OrganizationId : data.id,
+												OrganizationName : data.name
+										}});
+										$(".organization-stastic").append(rendered);
+										drawCanvas($("#"+data.id).find(".hexagram").get(0),compassion,sacrifice,strength,endurance,intelligence,true);
+									}
+								}(data[i]),
+								error: function () {
+				
+								}
+							});
+						};
+					}
+				});
+			}
+			function show_myOrganization(){
+				showOne($(".my-organizations"));
+				amplify.request({
+					resourceId: "ogn_be_in",
+					success: function (data) {
+						data.forEach(function (item) {
+							item.Time = function () {
+								return time_change(this.time);
+							}
+							item.remove = true;
+						})
+						var template = $("#join-ogns").html();
+						var rendered = Mustache.render(template, {"data": data});
+						$(".my-organizations").html(rendered);
+					}
+				});
+			}
+			function show_applyOrganization() {
+				showOne($(".apply-organization"));
+				amplify.request({
+					resourceId: "ogn_to_join",
+					success: function(data) {
+						data.forEach(function(item) {
+							item.add = true;
+						});
+						var template = $("#join-ogns").html();
+						var rendered = Mustache.render(template, {"data": data});
+						$(".apply-organization .organization-results").html(rendered);
+					}
+				});
+			}
+			function show_myApplys() {
+				showOne($(".my-organizations"));
+				amplify.request({
+					resourceId: "applied_ogn",
+					success: function (data) {
+						for (var i = data.length - 1; i >= 0; i--) {
+							data[i].link = "visitor.html?id=" + data[i].organizationId;
+							data[i].applyTime = time_change(data[i].applyTime);
+							data[i].actionTime = time_change(data[i].actionTime);
+							data[i].status = translate_applied_status(data[i].status);
+						};
+						var template = $("#ogn_applied").html();
+						var rendered = Mustache.render(template, {"data": data});
+						$(".my-organizations").html(rendered);
+					}
+				});
+			}
+		});
+	}) ($);
+</script>

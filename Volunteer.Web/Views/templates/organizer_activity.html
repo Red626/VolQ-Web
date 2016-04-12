@@ -1,0 +1,42 @@
+<div class="hots">
+<div class="hot_activity_items row" id="hot_activity">
+	{{#activities}}
+	<div class="col-sm-6 hot_activity_item">
+		<div class="row">
+		<div class="hot_item_left col-sm-7">
+			<a class="hot_item" id="{{Id}}" href="javascript:void(0);">
+				<h3 class="hot_item_title">{{Name}}</h3>
+			</a>
+			<p class="hot_item_ornized">
+				Orgnized By: 
+				<span class="OrganizationName">{{OrganizationName}}</span>
+			</p>
+			<p class="hot_item_status">
+			<strong class="point">点数：{{Point}}</strong>
+			<b class="status">状态：{{real_status}}</b>
+			</p>
+			<p class="hot_item_time">
+				活动时间:
+				<span class="starttime">{{StartTime}}</span>
+			</p>
+			<p class="hot_item_location">
+				<strong>
+				地点:
+				<span class="location">{{Location}}</span>
+				</strong>
+			</p>
+		</div>
+		{{#firstImage}}
+		<div class="col-sm4">
+			<img src="{{firstImage}}" class="img-responsive" width="212px" style = "max-height: 180px;">
+		</div>
+		{{/firstImage}}
+		{{^Photos}}
+		<div class="hot_item_right col-sm-4">
+		</div>
+		{{/Photos}}
+		</div>
+	</div>
+	{{/activities}}
+</div>
+</div>

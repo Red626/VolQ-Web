@@ -1,0 +1,626 @@
+<div id="addActivityForm">
+	<form role="form">
+		<div id="wizard" class="swMain">
+			<ul>
+				<li><a href="#step-1"><span class="stepNumber">1</span><span class="stepDesc">活动基本信息</span></a></li>
+				<li><a href="#step-2"><span class="stepNumber">2</span><span class="stepDesc">时间地点</span></a></li>
+				<li><a href="#step-3"><span class="stepNumber">3</span><span class="stepDesc">活动奖励</span></a></li>
+				<li><a href="#step-4"><span class="stepNumber">4</span><span class="stepDesc">活动详情</span></a></li>
+				<li><a href="#step-5"><span class="stepNumber">5</span><span class="stepDesc">图片视频</span></a></li>
+				<li id="error" style="display:none;">
+			        <ol class="control-label error-message" id="error-message"></ol>
+				</li>
+			</ul>
+			<div id="step-1">
+				<strong class="StepTitle">活动基本信息</strong>
+				<div style="display: inline-block;">
+					<div class="activity_prop">
+						<strong>活动名称：</strong><input type="text" name="name"/><input type="text" name="activityId" style="display:none;"/>&nbsp;
+					</div>
+					<div class="activity_prop">
+						<strong>隶属组织：</strong><select name="organizationId"></select>&nbsp;
+					</div>
+					<div class="activity_prop">
+						<strong>人数要求：</strong>
+						<span>下限</span><input type="number" value="1" min="0" max="100" name="leastVolunteers"/>&nbsp;
+						<span>上限(0表示无上限)</span><input type="number" value="0" min="0" max="100" name="mostVolunteers"/>
+					</div>
+				</div>
+				<p>
+					<strong>活动标签：</strong><br/>
+					<input type="hidden" name="activitytags" class="tags" value="" />
+				</p>
+				<div>
+					<strong>必须满足(首次修改将覆盖原约束！)：</strong><span id="mustGranted"></span><input type="hidden" name="mustGranted"/>
+					<table class="conditioncontent mustGranted">
+						<tbody>
+							<tr>
+								<td class="operate">
+									<select name="badges" style="width:60%;">
+									</select>
+									<button type="button" class="addor">添加Or</button type="button">
+								</td>
+								<td class="conditions"></td>
+								<td><a class="addand" href="javascript:void(0)" title="添加">+</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>&nbsp;
+				<div>
+					<strong>禁止满足(首次修改将覆盖原约束！)：</strong><span id="cantGranted"></span><input type="hidden" name="cantGranted"/>
+					<table class="conditioncontent cantGranted">
+						<tbody>
+							<tr>
+								<td class="operate">
+									<select name="badges" style="width:60%;">
+									</select>
+									<button type="button" class="add">添加</button type="button">
+								</td>
+								<td class="conditions"></td>
+								<td><a class="removeall" href="javascript:void(0)" title="Remove all conditions">x</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>&nbsp;
+				<p>
+					<strong>活动摘要：</strong><span id="validNum"></span>
+					<textarea class="form-control" rows="4" onKeyDown="checkLength(this)" onKeyUp="checkLength(this)" onPaste="checkLength(this)" name="activityAbstract"></textarea>
+				</p>
+			</div>
+			<div id="step-2">
+				<strong class="StepTitle">时间地点</strong>
+				<p>
+					<strong>注册时间：</strong>
+					<span>From</span><input class="timepicker" type="text" value="" name="openSignInTime" />
+					<span>To</span><input class="timepicker" type="text" value="" name="closeSignInTime" />
+					<strong>活动时间：</strong>
+					<span>Start</span><input class="timepicker" type="text" value="" name="startTime" />
+					<span>Finish</span><input class="timepicker" type="text" value="" name="finishTime" />
+				</p>
+				<p>
+					<label>活动地点：</label>(请点击地图选取活动地点坐标)<br>
+					<input name="location" style="width:35%;"></input>
+					&nbsp;坐标：<input type="text" name="coordinate" style="width:35%;" readonly>
+					<div class="map" id="locationmap"></div>
+				</p>
+			</div>
+			<div id="step-3">
+				<strong class="StepTitle">活动奖励</strong>
+				<p>
+					<strong>活动分数(本月余额:<span id="restPoint"></span>)</strong>
+					<input type="number" value="10" name="point" style="width:50%;" /><br/>
+				</p>
+				<p class="pull-left hexagram">
+					<strong>属性分配(可用点数:<span id="restHexagram"></span>/50)</strong><br/>
+					<span>爱心：</span><input type="number" value="1" name="compassion" style="width:50%;" min="0" max="100"/><br/>
+					<span>奉献：</span><input type="number" value="1" name="sacrifice" style="width:50%;" min="0" max="100"/><br/>
+					<span>力量：</span><input type="number" value="2" name="strength" style="width:50%;" min="0" max="100"/><br/>
+					<span>耐力：</span><input type="number" value="1" name="endurance" style="width:50%;" min="0" max="100"/><br/>
+					<span>智力：</span><input type="number" value="1" name="intelligence" style="width:50%;" min="0" max="100"/>
+				</p>
+				<div class="pull-left growth">
+					<canvas id="canvas" width="250" height="250"></canvas>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div id="step-4">
+				<strong class="StepTitle">活动详情</strong>
+				<strong>具体过程</strong>
+				<textarea class="form-control" rows="6" name="procedure" style="display:none;"></textarea>
+				<div class="summernote" id="procedure"></div>
+				<strong>人员要求</strong><textarea class="form-control" rows="4" name="requirement" style="display:none;"></textarea>
+				<div class="summernote" id="requirement"></div>
+			</div>
+			<div id="step-5">
+				<strong class="StepTitle">图片视频</strong>
+				<strong>上传图片(若不修改，将保留原有图片！)：(建议图片比例4:3,否则图片会被裁剪)</strong>
+		        <div id="uploadImages" class="upload"></div>
+		        <strong id="uploadSuccess" style="display: none;">上传成功文件地址：</strong><br/>
+		        <div id="uploadSuccessInf" class="upload_inf"></div>
+		        <strong id="uploadFailure" style="display: none;">上传失败文件名称：</strong><br/>
+		        <div id="uploadFailureInf" class="upload_inf"></div>
+		        <strong>视频网址：(推荐来源：<a href="http://www.youku.com/" target="_blank" style="color:#3498DB">优酷视频</a>)</strong>
+				<input name="Videos[]" class="form-control"/>
+			</div>
+		</div>
+	</form>
+</div>
+<style type="text/css">
+	.swMain {
+		width: 100%;
+		display: inline-block;
+	}
+	.swMain .stepContainer div.content {
+		width: 100%;
+	}
+	.anchor {
+		float: none;
+	}
+	.activity_prop {
+		float: left;
+	}
+	@media screen and (max-width: 1200px) {
+		.activity_prop {
+			float: none;
+			display: block;
+		}
+	}
+</style>
+<script type="text/template" id="conditionrow">
+	<tr>
+		<td class="operate">
+			<select name="badges" style="width:60%;">
+			</select>
+			<button type="button" class="addor">添加Or</button>
+		</td>
+		<td class="conditions"></td>
+		<td><a class="removeand" href="javascript:void(0)" title="删除">-</a>
+	</tr>
+</script>
+<script>
+	// 百度地图API功能
+	var map = new BMap.Map("locationmap");
+	var point = new BMap.Point(114.5,30.8);
+	map.centerAndZoom(point,11);
+	map.addEventListener("click", function(e){
+		var point = e.point;
+		var geoc = new BMap.Geocoder();
+		geoc.getLocation(point, function(rs){
+			var addComp = rs.addressComponents;
+			$("input[name='coordinate']").val("lng:" + point.lng + ",lat:" + point.lat);
+			$("input[name='location']").val(addComp.province + addComp.city + addComp.district  + addComp.street + addComp.streetNumber);
+		});
+		addMarker(point);
+	});
+	// 编写自定义函数,创建标注
+	function addMarker(point){
+		map.clearOverlays();
+		var marker = new BMap.Marker(point);
+		map.addOverlay(marker);
+	}
+	// 添加带有定位的导航控件
+	var navigationControl = new BMap.NavigationControl({
+		// 靠左上角位置
+		anchor: BMAP_ANCHOR_TOP_RIGHT,
+		// LARGE类型
+		type: BMAP_NAVIGATION_CONTROL_LARGE,
+		// 启用显示定位
+		enableGeolocation: false
+	});
+	map.addControl(navigationControl);
+	map.disableDoubleClickZoom();
+	map.enableScrollWheelZoom(true);
+</script>
+<script>
+	// Smart Wizard
+	var SaveEvent=addActivity;
+	$('#wizard').smartWizard({keyNavigation: false,transitionEffect:'slide',onFinish:onFinishCallback});
+	amplify.request({
+    	resourceId: 'allbadges', 
+    	success: function (data) {
+    		for (var i = 0; i < data.length; i++) {
+    			$("select[name='badges']").append("<option val='"+data[i].BadgeName+"' title='"+data[i].Description+"'>"+data[i].BadgeName+"</option>");
+    		};
+        },
+        error: function () {
+        }
+    });
+	function onFinishCallback(){
+		$("textarea[name='procedure']").val($('#procedure').code());
+		$("textarea[name='requirement']").val($('#requirement').code());
+		var errors = validate();
+		console.log(errors);
+		if (errors.length) {
+			$("#error").show();
+			$("#error-message").empty();
+			for(var i in errors) {
+				$("#error-message").append("<li>"+ errors[i] +"</li>");
+			}
+		}
+		else {
+	        SaveEvent();
+	    }
+	}
+	function addActivity()
+	{
+		amplify.request({
+        	resourceId: 'add_activity', 
+        	data: $('form').serialize(), 
+        	success: function (data) {
+	            window.location.hash="#/draft";
+	        },
+	        error: function () {
+	            $('#error').show();
+	            $('#error-message').text("一些服务器的错误");
+	        }
+	    });
+	}
+	function updateActivity()
+	{
+		amplify.request({
+			resourceId: "update_activity",
+			data: $('form').serialize(),
+			success: function() {
+				document.location.reload();
+			},
+			error: function() {
+				$('#activity_alert_error').fadeIn();
+				setTimeout(function() {
+					$('#activity_alert_error').fadeOut();
+				},5000)
+			},
+		});
+	}
+	function CalculateMustGranted(){
+		var s="{";
+		$(".mustGranted .conditions").each(function(){
+			s=s+"{";
+			$(this).find(".badge").each(function(){
+				s=s+$(this).text()+",";
+			});
+			if(s[s.length-1]==","){
+				s=s.substring(0,s.length-1);
+			}
+			s=s+"},";
+		});
+		if(s[s.length-1]==","){
+			s=s.substring(0,s.length-1);
+		}
+		s=s+"}";
+		$("#mustGranted").text(s);
+		$("input[name='mustGranted']").val(s);
+	}
+	$("a.addand").click(function(){
+		if($("table.mustGranted>tbody>tr").size()<3){
+			$(this).parent().parent().parent().prepend($("#conditionrow").html());
+			var newCondition = $(this).parent().parent().parent().find("tr:first");
+			amplify.request({
+		    	resourceId: 'allbadges', 
+		    	success: function (data) {
+		    		//$("select[name='badges']").empty();
+		    		for (var i = 0; i < data.length; i++) {
+		    			newCondition.find(".operate select[name='badges']").append("<option val='"+data[i].BadgeName+"' title='"+data[i].Description+"'>"+data[i].BadgeName+"</option>");
+		    		};
+		        },
+		        error: function () {
+		        }
+		    });
+			CalculateMustGranted();
+			$("button.addor:first").click(addOr);
+			$('a.removeand:first').click(function(){
+				$(this).parent().parent().remove();
+				CalculateMustGranted();
+			});
+		};
+	});
+	$("button.addor").click(addOr);
+	function addOr(event)
+	{
+		if($(event.target).parent().parent().find(".conditions").children().size()<5){
+			var selectBadge = $(event.target).parent().find("select[name='badges']").val();
+			var title = $(event.target).parent().find("select option[val='"+selectBadge+"']").attr("title");
+			var markup = '<span><span class="badge" title="'+title+'">'+selectBadge+'</span>&nbsp;&nbsp;<a class="removeor" href="javascript:void(0)" title="Removing condition">x</a></span>';
+			$(event.target).parent().parent().find(".conditions").append(markup);
+			$(event.target).siblings("select[name='badges']").find("option[val='"+selectBadge+"']").remove();
+			CalculateMustGranted();
+			$('a.removeor').click(function(){
+				var selectBadge = $(this).siblings("span");
+				$(this).parent().parent().parent().find(".operate select[name='badges']").prepend("<option val='"+selectBadge.text()+"' title='"+selectBadge.attr("title")+"'>"+selectBadge.text()+"</option>");
+				$(this).parent().remove();
+				CalculateMustGranted();
+			});
+		};
+	}
+	function CalculateCantGranted(){
+		var s="{";
+		$(".cantGranted").find(".conditions .badge").each(function(){
+			s=s+"{"+$(this).text()+"},";
+		});
+		if(s[s.length-1]==","){
+			s=s.substring(0,s.length-1);
+		}
+		s=s+"}";
+		$("#cantGranted").text(s);
+		$("input[name='cantGranted']").val(s);
+	}
+	$("button.add").click(function(){
+		if($(".cantGranted").find(".conditions .badge").size()<5){
+			var selectBadge = $(this).parent().find("select[name='badges']").val();
+			var title = $(this).parent().find("select option[val='"+selectBadge+"']").attr("title");
+			var markup = '<span><span class="badge" title="'+title+'">'+selectBadge+'</span>&nbsp;&nbsp;<a class="remove" href="javascript:void(0)" title="Removing">x</a></span>';
+			$(this).parent().parent().find(".conditions").append(markup);
+			$(this).siblings("select[name='badges']").find("option[val='"+selectBadge+"']").remove();
+			CalculateCantGranted();
+			$('a.remove').click(function(){
+				var selectBadge = $(this).siblings("span");
+				$(this).parent().parent().parent().find(".operate select[name='badges']").prepend("<option val='"+selectBadge.text()+"' title='"+selectBadge.attr("title")+"'>"+selectBadge.text()+"</option>");
+				$(this).parent().remove();
+				CalculateCantGranted();
+			});
+		};
+	});
+	$("a.removeall").click(function(){
+		$(".cantGranted").find(".conditions a.remove").click();
+		CalculateCantGranted();
+	});
+	// CalculateMustGranted();
+	// CalculateCantGranted();
+	function validate() {
+		var error = [];
+	
+		if ($("input[name='point']").val() === "") {
+			error.push("分数不能为空");
+			$("input[name='point']").addClass("invalid-input");
+		}
+		if ($("input[name='name']").val() === "") {
+			error.push("名称不能为空");
+			$("input[name='name']").addClass("invalid-input");
+		}
+		var least = parseInt($("input[name='leastVolunteers']").val());
+		var most = parseInt($("input[name='mostVolunteers']").val());
+		if (least > most && most !== 0) {
+			error.push("最少人数要小于最大人数");
+			$("input[name='mostVolunteers']").addClass("invalid-input");
+			$("input[name='leastVolunteers']").addClass("invalid-input");
+		}
+		if ($("input[name='openSignInTime']").val() === "" || $("input[name='closeSignInTime']").val() === "" || $("input[name='startTime']").val() === "" || $("input[name='finishTime']").val() === "") {
+			error.push("时间不能为空");
+			return error;
+		}
+		var opentime = new Date($("input[name='openSignInTime']").val());
+		var closetime = new Date($("input[name='closeSignInTime']").val());
+		var startTime=new Date($("input[name='startTime']").val());
+		var finishTime=new Date($("input[name='finishTime']").val());
+		if (opentime > closetime) {
+			$("input[name='openSignInTime']").addClass("invalid-input");
+			$("input[name='closeSignInTime']").addClass("invalid-input");
+			error.push("时间错误");
+		}
+		else if (startTime > finishTime) {
+			$("input[name='startTime']").addClass("invalid-input");
+			$("input[name='finishTime']").addClass("invalid-input");
+			error.push("时间错误");
+		}
+		else if (opentime > startTime) {
+			$("input[name='openSignInTime']").addClass("invalid-input");
+			$("input[name='startTime']").addClass("invalid-input");
+			error.push("时间错误");
+		}
+		else if (closetime > finishTime) {
+			$("input[name='closeSignInTime']").addClass("invalid-input");
+			$("input[name='finishTime']").addClass("invalid-input");
+			error.push("时间错误");
+		}
+		return error;
+	}
+</script>
+<script>
+    $(function () {
+    	$(".xdsoft_datetimepicker").remove();
+    	$('.timepicker').datetimepicker({
+	        //mask:'9999/19/39 29:59'
+	    });
+	    amplify.request({
+	    	resourceId: "ogn_be_in",
+	    	success:function(data){
+		    	if (data.length>0) {
+		    		var index=data.length;
+		    		for (var i = data.length - 1; i >= 0; i--) {
+		    			$("select[name='organizationId']").append('<option value='+data[i].id+'>'+data[i].name+'</option>');
+		    		};
+		    		$("select[name='organizationId'] option:first").trigger("change");
+		    	}
+		    	else{
+		    		$("#ognz-error").text("没有找到任何组织");
+		    	}
+	    	},
+	    	error:function(data){
+	    		$('#ognz-error').text("(*出现未知错误)");
+	    	}
+	    });//请求已加入的组织
+	    $("select[name='organizationId']").change(changeRestPoint);
+	    
+	    drawHexagramProperty();
+	    $("input[name='compassion']").change(drawHexagramProperty);
+	    $("input[name='sacrifice']").change(drawHexagramProperty);
+	    $("input[name='strength']").change(drawHexagramProperty);
+	    $("input[name='endurance']").change(drawHexagramProperty);
+	    $("input[name='intelligence']").change(drawHexagramProperty);
+	    // 初始化插件
+		$("#uploadImages").zyUpload();
+		$("input[name='activitytags']").tagsInput({width:'auto',maxTags:5});
+		
+		$('.summernote').summernote({
+		  toolbar: [
+		    ['style', ['bold', "italic", "underline"]],
+		    ['fontsize', ['fontsize']],
+		    ['color', ['color']],
+		    ['para', ["ul", "ol", "paragraph"]],
+		    ["height", ['height']],
+		  ],
+		  height: 150
+		});
+		$("#addActivityForm input").blur(function () {
+			var error = validate();
+			
+			if (error.length) {
+				$("#error").show();
+				$("#error-message").empty();
+				for(var i in error) {
+					$("#error-message").append("<li>"+ error[i] +"</li>");
+				}
+				$(".actionBar .buttonFinish").addClass("buttonDisabled");
+			}
+			else {
+				$(".actionBar .buttonFinish").removeClass("buttonDisabled");
+			}
+		});
+		$("#addActivityForm input").focus(function () {
+			switch ($(this).attr("id")) {
+				case "datetime_open":
+				case "datetime_close":
+				case "datetime_from":
+				case "datetime_to":
+					$("input[name='openSignInTime']").removeClass("invalid-input");
+					$("input[name='closeSignInTime']").removeClass("invalid-input");
+					$("input[name='startTime']").removeClass("invalid-input");
+					$("input[name='finishTime']").removeClass("invalid-input");
+					break;
+				case "least":
+				case "most":
+					$("input[name='leastVolunteers']").removeClass("invalid-input");
+					$("input[name='mostVolunteers']").removeClass("invalid-input");
+				default:
+					$(this).removeClass("invalid-input");
+			}
+			$("#error").hide();
+		});
+    });
+	function initialise(id) {
+		if(typeof id !=="undefined")
+		{
+			amplify.request({
+				resourceId: 'activity_detail',
+				data: {"id": id},
+				success: function(activity_data){
+					$("input[name='name']").val(activity_data.Name);
+					$("input[name='activityId']").val(activity_data.Id);
+					$("select[name='organizationId']").val(activity_data.OrganizationId);
+					$("input[name='mostVolunteers']").val(activity_data.MostVolunteers);
+					$("input[name='leastVolunteers']").val(activity_data.LeastVolunteers);
+					if(activity_data.Tags!=null)
+					{
+						for(var i=activity_data.Tags.length-1;i>=0;i--)
+						{
+							if(activity_data.Tags[i]!=""&&activity_data.Tags[i]!=null)
+							{
+								$("input[name='activitytags']").addTag(activity_data.Tags[i]);
+							}
+						}
+					}
+
+					var s="{";
+					for(var i=0;i<activity_data.BadgeLimit.MustGranted.length;i++)
+					{
+						s=s+"{";
+						for(var j=0;j<activity_data.BadgeLimit.MustGranted[i].length;j++)
+						{
+							s=s+activity_data.BadgeLimit.MustGranted[i][j]+",";
+						}
+						if(s[s.length-1]==","){
+							s=s.substring(0,s.length-1);
+						}
+						s=s+"},";
+					}
+					if(s[s.length-1]==","){
+						s=s.substring(0,s.length-1);
+					}
+					s=s+"}";
+					$("#mustGranted").text(s);
+					$("input[name='mustGranted']").val(s);
+
+					var s="{";
+					$(".cantGranted").find(".conditions .badge").each(function(){
+						s=s+"{"+$(this).text()+"},";
+					});
+					for(var i=0;i<activity_data.BadgeLimit.CantGranted.length;i++)
+					{
+						s=s+"{"+activity_data.BadgeLimit.CantGranted[i]+"},";
+					}
+					if(s[s.length-1]==","){
+						s=s.substring(0,s.length-1);
+					}
+					s=s+"}";
+					$("#cantGranted").text(s);
+					$("input[name='cantGranted']").val(s);
+					
+					$("textarea[name='activityAbstract']").val(activity_data.Abstract);
+					$("#procedure").code(activity_data.Procedure);
+					$("#requirement").code(activity_data.Requirement);
+					$("input[name='coordinate']").val(activity_data.Coordinate);
+					$("input[name='location']").val(activity_data.Location);
+
+					$("input[name='point']").val(activity_data.Point);
+					$("input[name='compassion']").val(activity_data.HexagramProperty.Compassion);
+					$("input[name='sacrifice']").val(activity_data.HexagramProperty.Sacrifice);
+					$("input[name='strength']").val(activity_data.HexagramProperty.Strength);
+					$("input[name='endurance']").val(activity_data.HexagramProperty.Endurance);
+					$("input[name='intelligence']").val(activity_data.HexagramProperty.Intelligence);
+
+					$("input[name='openSignInTime']").val(update_time(activity_data.OpenSignInTime));
+					$("input[name='closeSignInTime']").val(update_time(activity_data.CloseSignInTime));
+					$("input[name='startTime']").val(update_time(activity_data.StartTime));
+					$("input[name='finishTime']").val(update_time(activity_data.FinishTime));
+					
+					// 将坐标显示在地图上,并调整地图视野
+					address = new BMap.Point(translate_coordinate(activity_data.Coordinate).lng,translate_coordinate(activity_data.Coordinate).lat);
+					map.centerAndZoom(address, 10);
+					addMarker(address);
+					// 显示图片视频
+					if(activity_data.Photos!=null)
+					{
+						for(var i=0;i<activity_data.Photos.length;i++)
+						{
+							$("#photos").append("<li><img style='max-height: 300px;max-width:400px;' src='"+activity_data.Photos[i]+"' alt='not found' /></li>");
+						}
+						$("#photos").zAccordion({ 
+							easing: 'easeOutBounce',
+							timeout: 3000,
+							slideWidth: 450,
+							width: 700,
+							height: 300
+						});
+					}
+					if(activity_data.Videos!=null)
+					{
+						$("input[name='video']").val(activity_data.Videos[0]);
+					}
+					$("input[name='name']").focus();
+					drawCanvas('canvas',activity_data.HexagramProperty.Compassion,activity_data.HexagramProperty.Sacrifice,activity_data.HexagramProperty.Strength,activity_data.HexagramProperty.Endurance,activity_data.HexagramProperty.Intelligence,true);
+				},
+				error: function(data){
+					window.location.href="NotFound.html";
+				},
+			});
+			SaveEvent=updateActivity;
+		}
+		else
+		{
+			amplify.request({
+				resourceId: "hottags",
+				success: function (data) {
+					if (Array.isArray(data)) {
+						for (var i in data) {
+							$("input[name='activitytags']").addTag(data[i]);
+						};
+					}
+				}
+			});
+		}
+		CalculateMustGranted();
+		CalculateCantGranted();
+	}
+	function changeRestPoint(){
+    	amplify.request({
+	    	resourceId: "remaining_point",
+	    	data: {id: $("select[name='organizationId']").val()},
+	    	success:function(data){
+		    	$('#restPoint').text(data);
+		    	$("input[name='point']").attr('max',parseInt($("#restPoint").text()));
+	    	},
+	    	error:function(data){
+	    		$('#ognz-error').text("(*出现未知错误)");
+	    	}
+    	});
+    };
+    //显示HexagramProperty
+	function drawHexagramProperty(){
+    	$("input[name='compassion']").attr('max',50-parseInt($("input[name='sacrifice']").val())-parseInt($("input[name='strength']").val())-parseInt($("input[name='endurance']").val())-parseInt($("input[name='intelligence']").val()));
+	    $("input[name='sacrifice']").attr('max',50-parseInt($("input[name='compassion']").val())-parseInt($("input[name='strength']").val())-parseInt($("input[name='endurance']").val())-parseInt($("input[name='intelligence']").val()));
+	    $("input[name='strength']").attr('max',50-parseInt($("input[name='compassion']").val())-parseInt($("input[name='sacrifice']").val())-parseInt($("input[name='endurance']").val())-parseInt($("input[name='intelligence']").val()));
+	    $("input[name='endurance']").attr('max',50-parseInt($("input[name='compassion']").val())-parseInt($("input[name='sacrifice']").val())-parseInt($("input[name='strength']").val())-parseInt($("input[name='intelligence']").val()));
+	    $("input[name='intelligence']").attr('max',50-parseInt($("input[name='compassion']").val())-parseInt($("input[name='sacrifice']").val())-parseInt($("input[name='strength']").val())-parseInt($("input[name='endurance']").val()));
+	    $('#restHexagram').text(50-parseInt($("input[name='compassion']").val())-parseInt($("input[name='sacrifice']").val())-parseInt($("input[name='strength']").val())-parseInt($("input[name='endurance']").val())-parseInt($("input[name='intelligence']").val()));
+    	drawCanvas('canvas',parseInt($("input[name='compassion']").val(), 10),parseInt($("input[name='sacrifice']").val()),parseInt($("input[name='strength']").val()),parseInt($("input[name='endurance']").val()),parseInt($("input[name='intelligence']").val()));
+    };
+</script>

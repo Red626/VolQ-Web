@@ -1,0 +1,209 @@
+<div class="row activity-detail">
+	<div class="body-left col-sm-8">
+		<div class="detail-title">
+			<h1 id="activityName"></h1>
+			<div id="mainId" style="display:none;"></div>
+			<div class="door pull-right">
+				<a id="homePage" href="javascript:void(0);"><img src="image/home_white.png" class="ico"/></a>
+				<a data-dismiss="modal" style="display:none;" id="closePage" href="javascript:void(0);"><img src="image/quit_white.png" class="ico" title="退出活动详情页面"/></a>
+				<a target="_blank" style="display:none;" id="newPage"><img src="image/forward_white.png" class="ico" title="新页面打开活动详情页面"/></a>
+			</div>
+		</div>
+		<div class="content-container">
+			<h3>
+				<b>活动摘要</b>
+				<a id="video" class="introduction-video" style="color:rgb(255, 64, 129);display:none;" target="_blank" title="活动视频链接">
+					<span class="glyphicon glyphicon-film">
+				</a>
+			</h3>
+			<p id="abstract"></p>
+			<hr class="dotted_line">
+			<div>
+				<ul id="photos" class="hidden-xs hidden-sm"></ul>
+				<img id="defaultPhoto" class="hidden" style='width:80%;margin:0 auto' alt='not found'/>
+			</div>
+		 	<h3><b>活动内容</b></h3>
+			<p id="procedure" style="min-height:150px;"></p>
+			<h3><b>报名要求</b></h3>
+			<p id="requirement" style="min-height:150px;"></p>
+			<hr class="solid_line">
+			<div class="publish">
+				<span style="color:#ff4081;"><b>评论活动</b></span><span id="validNum"></span>
+				<div class="pull-right" id="makeComment" style="display:none;">
+	            	<img class="ico pointer" src="image/comment.png" title="评论活动" onclick="try{makeComment();}catch(err){};">
+	            </div>
+				<div id="isCommentOnComment" style="display:none;">false</div>
+				<div id="fatherCommentId" style="display:none;"></div>
+				<textarea class="form-control" rows="4" onKeyDown="checkLength(this)" onKeyUp="checkLength(this)" onPaste="checkLength(this)" name="newComment" style="margin-top:10px;"></textarea>
+	            <button class="btn btn-default makeComment" style="width:100%;" onclick="try{commitComment(this);}catch(err){};"><img class="ico" src="image/makeComment.png"/>提交评论</button>
+				<div id="comments">
+				</div>
+				<div class="text-center">
+		            <div class="pull-left">
+		                当前页面:
+		                <span id="current_page">1</span>
+		            </div>
+		            <b id="prev" class="pointer" style="color:#3498DB;" onclick="try{prevPage();}catch(err){};">上一页</b>
+		            ||
+		            <b id="next" class="pointer" style="color:#3498DB;" onclick="try{nextPage();}catch(err){};">下一页</b>
+		            <div class="pull-right">
+		                总页数:
+		                <span id="total_page">1</span>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</div>
+	<div class="body-right col-sm-4">
+		<a class="organization-link" href="#" target="_blank" onfocus="this.blur();">
+			<table>
+				<tr>
+					<td>
+						<img class="avatar" alt=""  id="organizationAvatar">
+					</td>
+					<td>
+						<strong id="organizationName"></strong>
+					</td>
+				</tr>
+			</table>
+		</a>
+		<hr class="solid_line">
+		<div>
+			<a class="pull-right" href="javascript:void(0);" target="_blank" style="display: none;">
+            	<img class="summary pointer" src="image/summary.png">
+            </a>
+            <div id="statusText">
+            	活动状态：<strong class="status"></strong>
+        	</div>
+			<div id="myStatus" style="display:none;">
+				我的状态：<strong class="status"></strong>
+        	</div>
+			<div class="complete" style="display:none;height:50px;">
+				<b style="color:#ff4081;font-size:40px;margin-left:30px;" class="pull-left"><span id="rating">0</span><sup>'</sup></b>
+				<div class="pull-left" style="height:40px;margin:10px 10px 0 10px;">
+					<div class="rating">
+						<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="一星">
+						<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="二星">
+						<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="三星">
+						<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="四星">
+						<img class="mymark" src="image/mark_false.png" onclick="try{changeMark(this);}catch(err){};" title="五星">
+					</div>
+					（已有<span id="ratedNumber"></span>人对此活动评分）
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<hr class="dotted_line">
+			<button class="btn pink_bg" id="registerAndBack" style="display: none;" onclick="try{registerAndBack(this);}catch(err){};"><img class="ico" src="image/signin_white.png"/>注册后报名活动</button>
+			<button class="btn pink_bg" id="joinActivity" style="display: none;"><img class="ico" src="image/signin_white.png"/>加入活动</button>
+			<button class="btn gray_bg" id="quitActivity" style="display: none;"><img class="ico" src="image/signin_white.png"/>退出活动</button>
+			<button class="btn white_bg" id="favoriteActivity" style="display: none;"><img class="ico" src="image/favorite_pink.png"/>收藏活动</button>
+			<button class="btn gray_bg" id="unfavoriteActivity" style="display: none;"><img class="ico" src="image/favorite_white.png"/>取消收藏</button>
+			<button class="btn white_bg" id="manageActivity" style="display: none;"><img class="ico" src="image/manage_pink.png"/>管理活动</button>
+			<button class="btn white_bg" id="editActivity" style="display: none;"><img class="ico" src="image/edit_pink.png"/>编辑活动</button>
+			<button class="btn white_bg" id="approveActivity" style="display: none;"><img class="ico" src="image/approve_pink.png"/>批准活动</button>
+		</div>
+		<div class="all_time">
+			<div><strong>注册时间:</strong><br/></div>
+			<div class="time">
+				<span class="glyphicon glyphicon-play ico"></span>&nbsp;<span id="openSignInTime" class="time-block"></span>
+			</div>
+			<div class="time">
+			<span class="glyphicon glyphicon-stop ico"></span>&nbsp;<span id="closeSignInTime" class="time-block"></span><br/>
+			</div>
+			<strong>活动时间:</strong><br/>
+			<div class="time">
+			<span class="glyphicon glyphicon-play ico"></span>&nbsp;<span id="startTime" class="time-block"></span>
+			</div>
+			<div class="time">
+			<span class="glyphicon glyphicon-stop ico"></span>&nbsp;<span id="finishTime" class="time-block"></span>
+			</div>
+			<hr class="dotted_line">
+			<strong>完成奖励：</strong>
+			<span id="point"></span>
+			<hr class="dotted_line">
+			<strong>活动地点:</strong><br/>
+			<span id="location"></span><br/>
+			<div class="text-center">
+				<img class="modal-map" id="locationmap"/>
+			</div>
+		</div>
+		<hr class="solid_line">
+		<div>
+			<strong>活动属性</strong><br/>
+			<div class="text-center">
+				<canvas id="property" width="250" height="250"></canvas>
+			</div>
+		</div>
+		<hr class="dotted_line">
+		<div>
+			<span id="tags"></span>
+		</div>
+		<hr class="dotted_line">
+		<div>
+			<strong>必须满足：</strong>
+			<ol id="mustGranted"></ol>
+			<strong>禁止满足：</strong>
+			<ol id="cantGranted"></ol>
+		</div>
+		<hr class="solid_line">
+		<div>
+			<img class="ico" src="image/view_gray.png"/><strong>查看次数：</strong><span id="viewedTime"></span><br/>
+		</div>
+		<div>
+			<img class="ico" src="image/favorite_gray.png"/><strong>收藏次数：</strong><span id="favoritedTime"></span><br/>
+		</div>
+		<div>
+			<img class="ico" src="image/signin_gray.png"/><strong>参加人数：</strong><span id="hasSignedInVolunteerNumber"></span><br/>
+		</div>
+		<div>
+			<img class="ico" src="image/limit_gray.png"/><strong>人数限制：</strong><span id="leastVolunteers"></span>~<span id="mostVolunteers"></span>
+		</div>
+		<hr class="solid_line">
+		<div style="display:none;">
+			<strong>已报名志愿者：</strong>
+			<ol id="hasSignedinVolunteers"></ol>
+		</div>
+		<div style="padding-bottom: 15px;">
+			<div>分享给朋友
+				<img class="ico pull-right pointer" src="image/share_pink.png" onclick="try{createShareLink();}catch(err){};"/>
+			</div>
+			<div class="text-center">
+				<img src="" class="qrcode">
+			</div>
+			<div id="share">
+				<b>活动分享链接:</b><img src="image/duplicate.png" class="ico pull-right pointer" title="复制链接" onclick="try{copyShareLink();}catch(err){};">
+				<input type="text" name="shareLink" class="form-control">
+			</div>
+		</div>
+	</div>
+	<script type="x-tmpl-mustache" id="comments_tmpl">
+	    {{#comments}}
+	    <div class="comment">
+	        <span style="display:none;" class="Id">{{Id}}</span>
+	        <span style="display:none;" class="UserId">{{UserId}}</span>
+	        <div class="head">
+	        	<a href="{{Link}}" target="_blank">{{UserName}}</a>
+	        	({{Status}})
+	        	<div class="pull-right">
+	        		<img class="pointer" src="image/reply.png" style="width:15px;" title="回复" onclick="try{replyComment(this);}catch(err){};"><span>{{Position}}楼</span>
+	        	</div>
+	        </div>
+        	<a href="{{Link}}" target="_blank" class="pull-left">
+        		<img src="{{Avatar}}" alt="" class="avatar">
+        	</a>
+            <div class="content">
+                <p>{{Content}}</p>
+            </div>
+            <div class="pull-right time">
+        		<span>{{Time}}</span>
+        	</div>
+	    </div>
+	    {{/comments}}
+	</script>
+	<script type="x-tmpl-mustache" id="volunteer_tmpl">
+		<li>
+			<a href="visitor.html?id={{id}}" target="_blank" style="color:#3498DB;"><b>{{name}}</b></a>
+			<span class='pull-right'>{{levelName}}</span>
+		</li>
+	</script>
+</div>

@@ -1,0 +1,429 @@
+<div class="filter">
+	<div class="friend-search filter-search">
+		<div class="search row">
+			<form class="form-inline">
+				<div class="form-group title">
+					<label style="color:white;">搜索志愿者:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+				</div>
+				<div class="col-sm-6" style="padding-right: 10px;">
+					<div class="form-group col-sm-4 search-input">
+						<input type="text" name="friendname" class="form-control" placeholder="姓名">
+					</div>
+					<div class="form-group col-sm-4 search-input">
+						<input type="text" name="email" class="form-control" placeholder="email">
+					</div>
+					<div class="form-group col-sm-4 search-input" >
+						<input type="text" name="affiliation" class="form-control" placeholder="组织">
+					</div>
+				</div>
+				<div class="form-group col-sm-2 btn_group">
+					<button type="button" class="btn btn-default form-control">
+						<img src="image/search.png" class="ico">
+					</button>
+				</div>
+			</form>
+		</div>
+		<div class="gap"></div>
+		<div class="invite row">
+			<form class="form-inline">
+				<div class="form-group title">
+					<label style="color:white;">邀请好友链接:</label>
+				</div>
+				<div class="form-group invitelink col-sm-6">
+					<input type="text" name="inviteLink" class="form-control">
+				</div>
+				<div class="form-group col-sm-2 btn_group" style="margin-left: 3px;">
+					<button type="button" class="btn btn-default form-control" title="复制链接">
+						<img src="image/duplicate.png" class="ico">
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="gap clearfix"></div>
+<div class="friends-content masonry">
+</div>
+<div class="go-top text-center">
+	<img src="image/backtotop.png" alt="" style="width:100%; height=100%; ">
+</div>
+<div class="modal fade" id="add_firend_info">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
+				<h4>附加信息</h4>
+			</div>
+			<div class="modal-body">
+				<input type="text" placeholder="请输入信息内容" class="form-control" name="comment">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+				<button type="button" class="btn btn-primary" id="sure">sure</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script id="friends" type="x-tmpl-mustache">
+	<div class="person box w0" id="{{id}}" href="visitor.html?id={{id}}" style="cursor: pointer;">
+		<div class="item_head">
+			{{#recommend}}
+			<img class="recommend" src="{{recommend}}" alt="">
+			{{/recommend}}
+			<img class="item_avatar" src="{{avatar.AvatarPath}}" alt="">
+			<div class="operate">
+				{{#add}}
+					<a href="javascript:void(0);" class="friend appllyFriend" title="申请好友">
+						<span class="glyphicon glyphicon-plus-sign"></span>
+					</a>
+				{{/add}}
+				{{#remove}}
+					<a href="javascript:void(0);" class="friend breakFriend" title="删除好友">
+						<span class="glyphicon glyphicon-remove-sign"></span>
+					</a>
+				{{/remove}}
+				{{#appliedme}}
+					<a href="javascript:void(0);" class="friend acceptFriend" title="同意好友申请">
+						<span class="glyphicon glyphicon-ok-sign"></span>
+					</a>
+					<a href="javascript:void(0);" class="friend refuseFriend" title="拒绝好友申请">
+						<span class="glyphicon glyphicon-ban-circle"></span>
+					</a>
+				{{/appliedme}}
+				{{#myapplyes}}
+					<a href="javascript:void(0);">
+						<span class="status glyphicon glyphicon-bullhorn"></span>{{status}}
+					</a>
+				{{/myapplyes}}
+			</div>
+		</div>
+		<div>
+			<h5 class="name text-center"><b>{{name}}</b></h5>
+			<p class="person-intro text remove hide">{{description}}</p>
+			{{#Comment}}
+				<p class="text remove hide">附加信息：{{Comment}}</p>
+			{{/Comment}}
+			{{#Time}}
+				<p class="text remove hide">申请时间：{{Time}}</p>
+			{{/Time}}
+		</div>
+	</div>
+</script>
+<script type="x-tmpl-mustache" id="applies">
+    <div class="box w4 {{side}} friendrank">
+        <table class="content">
+            <tr>
+                <td>
+                    <div class="friendavatar">
+                        <a href="{{link}}" target="_self">
+                            <img src="{{avatar.AvatarPath}}" alt="">
+                        </a>
+                    </div>
+                </td>
+                <td class="friendcontent">
+                    <div class="name">
+                        <a href="{{link}}" target="_self">{{Name}}</a>&nbsp;
+                        <span class="status">{{status}}</span>
+                    </div>
+                    <p>
+                        附加信息：<span>{{Comment}}</span>&nbsp;&nbsp;&nbsp;<br class="visible-xs-block"/>
+                        申请时间：<span>{{ApplyTime}}</span>&nbsp;&nbsp;&nbsp;<br class="visible-xs-block"/>
+                        操作时间：<span>{{ActionTime}}</span>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+<script>
+	(function () {
+		$(function () {
+			var loading = true;
+			var friends_container = $(".friends-content");
+			function init (data,template) {
+				$("input[name='inviteLink']").val(window.location.href.substring(0,window.location.href.indexOf("/",8))+"/views/index.html?userId=" + $.cookie("userid"));
+				if (typeof data === "undefined") {
+					return;
+				}
+				if (Array.isArray(data) && data.length == 0 ){
+					return ;
+				}
+				if (!Array.isArray(data)) {
+					data = [data];
+				}
+				for (var i = 0; i < data.length; i++) {
+					data[i][translate_mode($("li.friends>a.active").attr("id"))] = true;
+					if(typeof data[i].ApplyTime != 'undefined'){
+						data[i].ApplyTime = time_change(data[i].ApplyTime);
+					}
+					if(typeof data[i].ActionTime != 'undefined'){
+						data[i].ActionTime = time_change(data[i].ActionTime);
+					}
+					if(typeof data[i].Time != 'undefined'){
+						data[i].Time = time_change(data[i].Time);
+					}
+					if (typeof data[i].id !== "undefined") {
+						data[i].link = "visitor.html?id=" + data[i].id;
+					}
+					data[i].status = change_status(data[i].Status);
+					$(".friends-content").append(Mustache.render(template, data[i]));
+				}
+				function translate_mode(mode) {
+					if (mode === "myfriends") {
+						return "remove";
+					}
+					else if (mode === "addfriends") {
+						return "add";
+					}
+					else if (mode === "appliedfriends") {
+						return "appliedme";
+					}
+					else if (mode === "applying") {
+						return "myapplyes";
+					}
+				}
+				function change_status(status) {
+					switch(status) {
+						case 0: 
+							return "正在申请中";
+						case 1:
+							return "已经接受";
+						case 2:
+							return "请求被拒绝";
+						case 3:
+							return "不再是好友";
+					}
+				}
+			}
+			var callbacks = $.Callbacks();
+
+			function bindEvents () {
+				$(".friends-content").on("click", ".person a.friend", function (event) {
+					event.stopPropagation();
+					var id = $(this).parents(".person").attr("id");
+					$("#add_firend_info").data("id", id);
+					var mode = $("li.friends>a.active").attr("id");
+					callbacks.empty();
+					if (typeof mode === "undefined" || mode === "addfriends") {
+						callbacks.add(function (elem) {
+							return function (status) {
+								if (status) {
+									elem.text("等待回复");
+									$(elem).addClass("status").removeClass("friend");
+								}
+							}
+						}($(this)));
+					}
+					else if (mode === "myfriends"){
+						callbacks.add(function (elem) {
+							return function (status) {
+								if (status) {
+									elem.text("已删除");
+									$(elem).addClass("status").removeClass("friend");
+								}
+							}
+						}($(this)));
+					}
+					else if (mode === "appliedfriends") {
+						if ($(this).hasClass("acceptFriend")) {
+							var resource = "accept_friend";
+							var success_callback = function (elem) {
+								return function () {
+									elem.text("已添加");
+									$(elem).addClass("status").removeClass("friend");
+									$(elem).siblings().hide();
+								}
+							};
+						}
+						else if ($(this).hasClass("refuseFriend")) {
+							var resource = "refuse_friend";
+							var success_callback = function (elem) {
+								return function () {
+									elem.text("已拒绝");
+									$(elem).addClass("status").removeClass("friend");
+									$(elem).siblings().hide();
+								}
+							} ;
+						}
+						if (resource) {
+							var elem = $(this);
+							callbacks.add(function (id, comment) {
+								amplify.request({
+									resourceId: resource,
+									data: {id: id, comment: comment},
+									success: success_callback(elem)
+								});
+							});
+						}
+					}
+					else if (mode === "applying") {
+
+					}
+					$("#add_firend_info").modal("show");
+				});
+
+				$("#add_firend_info #sure").on("click", function (event) {
+					var id = $("#add_firend_info").data("id");
+					var comment = $("#add_firend_info input[name='comment']").val();
+					$("#add_firend_info").modal("hide");
+					if ($("li.friends>a.active").attr("id") === "addfriends") {
+						amplify.request({
+							resourceId: "make_friend",
+							data: {"id": id, "comment": comment},
+							success: function () {
+								callbacks.fire(true);
+							}
+						});
+					} 
+					else if ($("li.friends>a.active").attr("id") === "myfriends") {
+						amplify.request({
+							resourceId: "breakoff",
+							data: {"id": id, "comment": comment},
+							success: function () {
+								callbacks.fire(true);
+							}
+						});
+					}
+					else if ($("li.friends>a.active").attr("id") === "appliedfriends") {
+						callbacks.fire(id, comment);
+					}
+					else if($("li.friends>a.active").attr("id") === "applying") {
+
+					}
+				});
+
+				$(".friends-content").on("mouseenter", ".person", function () {
+					$(this).find(".hide").removeClass("hide");
+				}).on("mouseleave", ".person", function () {
+					$(this).find(".remove").addClass("hide");
+				});
+			}
+			function get_data (resource, data, template, add) {
+				var pageIndex = data.pageIndex;
+				friends_container.data("pageIndex", data.pageIndex);
+				amplify.request({
+					resourceId: resource,
+					data: data,
+					success: function (data) {
+						if (data.length === 0) {
+							friends_container.data("pageMax", pageIndex);
+						}
+						else if(resource==="recommend")
+						{
+							for (var i = data.length - 1; i >= 0; i--) {
+								data[i].recommend="image/recommend.png";
+							};
+						}
+						init(data,template);
+						loading = false;
+					}
+				});
+			}
+			$("li.friends>a").off().click(function () {
+				activeList($(this), "ul", "active");
+				$(".friends-content").empty();
+				$(".search input").each(function (item) {
+					$(this).val("");
+				});
+				slide($(".friends-content"));
+				var resource = null;
+				var template = null;
+				if ($(this).attr("id") === "myfriends") {
+					$(".friend-search").show();
+					resource = "myfriends";
+					template = $("#friends").html();
+				}
+				else if ($(this).attr("id") === "addfriends") {
+					$(".friend-search").show();
+					resource = "recommend";
+					template = $("#friends").html();
+				}
+				else if ($(this).attr("id") === "appliedfriends") {
+					$(".friend-search").hide();
+					resource = "applymefriend";
+					template = $("#friends").html();
+				}
+				else if ($(this).attr("id") === "applying") {
+					$(".friend-search").hide();
+					resource = "myappliedfriend";
+					template = $("#applies").html();
+				}
+				friends_container.removeData("pageMax");
+				if (resource) {
+					get_data(resource, {"pageIndex": 1}, template);
+				}
+			});
+			bindEvents();
+			$("li.friends>a:first").click();
+			
+			$(".search button").click(function (event) {
+				var query = $(".friend-search form:first").serializeArray();
+				var search = query.reduce(function (prev, item, index, array) {
+					prev[item.name] = item.value;
+					return prev;
+				}, {});
+				
+				var tab = $("li.friends>a.active").attr("id");
+				var resource = "";
+				if (tab === "myfriends") {
+					resource = "searchmyfriendbyfilter";
+				} 
+				else if (tab === "addfriends") {
+					resource = "searchnotmyfriendbyfilter";
+				}
+				else {
+					return ;
+				}
+				$(".friends-content").empty();
+				amplify.request({
+					resourceId: "find_friends",
+					data: $.extend(search, {resource: resource}),
+					success: function (data) {
+						init(data,$("#friends").html());
+					}
+				});
+			});
+			$(".invite button").click(function (event) {
+				copy_clip($("input[name='inviteLink']").val());
+			});
+			$(".friends-content").on("click",".person", function () {
+				location.assign($(this).attr("href"));
+			});
+			$(window).unbind("scroll").scroll(function () {
+				var a = document.documentElement.scrollTop==0? document.body.clientHeight : document.documentElement.clientHeight;
+				var b = document.documentElement.scrollTop==0? document.body.scrollTop : document.documentElement.scrollTop;
+				var c = document.documentElement.scrollTop==0? document.body.scrollHeight : document.documentElement.scrollHeight;
+				if (b > 100 ) {
+					$(".go-top").show();
+				}
+				else {
+					$(".go-top").hide();
+				}
+				if ( a + b === c && loading === false) {
+					var index = friends_container.data("pageIndex");
+					var max = friends_container.data("pageMax");
+					var id  = $("#friends-item a.active").attr("id");
+					if (id === "appliedfriends") {
+						var resource = "applymefriend";
+						var template = $("#friends").html();
+					}
+					else if (id === "applying") {
+						var resource = "myappliedfriend";
+						var template = $("#applies").html();
+					}
+					if (resource && template) {
+						if (typeof max === "undefined" || index < max) {
+							loading = true;
+							get_data(resource, {"pageIndex": index + 1}, template, true);
+						}
+					}
+				}
+			});
+			$(".go-top").bind("click", function (event) {
+				$("html, body").animate({scrollTop: 0}, 100);
+			});
+		});
+	}) ($);
+</script>

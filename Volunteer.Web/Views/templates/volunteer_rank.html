@@ -1,0 +1,82 @@
+<div class="gap clearfix"></div>
+<div class="rank-container">
+    <div class="masonry">
+        <div class="box w4 top5">
+            <fieldset >
+                <legend>
+                    <img class="ico" src="image/crown_pink.png">
+                    我的排名
+                    <div class="pull-right">
+                        志愿者得分总排名：
+                        <span id="myPosition">?</span>/
+                        <span id="volunteerNumber">?</span>
+                    </div>
+                    </legend>
+                <div class="content">
+                    <div class="ranktype pull-left" id="pointRank" title="点击切换得分好友排名">
+                        <img class="ico" src="image/score_pink.png">
+                        得分好友排名：
+                        <span class="myRank">?</span>/<span class="friendsCount">?</span>
+                    </div>
+                    <div class="ranktype pull-left" id="activityRank" title="点击切换参加活动数目好友排名">
+                        <img class="ico" src="image/mine_gray.png">
+                        参加活动数目好友排名：
+                        <span class="myRank">?</span>/<span class="friendsCount">?</span>
+                    </div>
+                    <div class="ranktype pull-left" id="badgeRank" title="点击切换获得徽章数目好友排名">
+                       <img class="ico" src="image/badge_gray.png">
+                       获得徽章数目好友排名：
+                        <span class="myRank">?</span>/<span class="friendsCount">?</span>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div id="rank"></div>
+    </div>
+</div>
+<div class="go-top text-center">
+    <img src="image/backtotop.png" alt="" style="width:100%; height=100%; ">
+</div>
+<script type="x-tmpl-mustache" id="rank_tmpl">
+    {{#ranks}}
+    <div class="box w4 {{side}} friendrank">
+        <span style="display:none;">{{id}}</span>
+        <table class="content">
+            <tr>
+                <td>
+                    <div class="friendavatar">
+                        <a href="{{link}}" target="_self">
+                            <img src="{{avatar}}" alt="">
+                            <div>#{{index}}</div>
+                        </a>
+                    </div>
+                </td>
+                <td class="friendcontent">
+                    <div class="name">
+                        <a href="{{link}}" target="_self">{{name}}</a>&nbsp;
+                        <img src="{{levelPicture}}"/><span class="levelName">{{levelName}}</span>
+                    </div>
+                    <p>
+                        得分：<span class="point">{{point}}</span>&nbsp;&nbsp;&nbsp;<br class="visible-xs-block"/>
+                        参加活动数目：<span class="activityCount">{{activityCount}}</span>&nbsp;&nbsp;&nbsp;<br class="visible-xs-block"/>
+                        获得徽章数目：<span class="badgeCount">{{badgeCount}}</span>&nbsp;&nbsp;&nbsp;<br class="visible-xs-block"/>
+                        学校/单位：<span class="affiliation">{{affiliation}}</span>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    {{/ranks}}
+</script>
+<script>
+$(function() {
+    if ($('#rankScript').length === 0) {
+        $("body").append("<script src='js\/rank\/rank.request.js'><\/script>");
+        $("body").append("<script src='js\/rank\/rank.js' id='rankScript'><\/script>");
+        $("#rankScript").ready(function () {
+            $("#main-body").trigger("rank.init");
+        });
+    }
+    $("#main-body").trigger("rank.init");
+});
+</script>

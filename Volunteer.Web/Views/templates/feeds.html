@@ -1,0 +1,213 @@
+<div class="clearfix"></div>
+<div class="masonry">
+	<div id="feedContainer">
+	</div>
+	<div class="box w3 text-center" id="loadMore"  style="cursor:pointer;">
+		<b>加载更多</b>	
+	</div>
+</div>
+<div class="go-top text-center">
+	<img src="image/backtotop.png" alt="" style="width:100%; height=100%; ">
+</div>
+<script type="x-tmpl-mustache" id="feeds">
+	<div class="box {{width}} feed">
+		<span style="display:none;">{{id}}</span>
+		<div class="head">
+			<div class="pull-left">
+				<a href="{{visitor}}" target="{{fromTarget}}">
+					<img class="avatar" alt="^_^" src="{{avatar}}">
+				</a>
+			</div>
+			<div class="pull-right delete">
+				<span class="glyphicon glyphicon-trash"></span>
+			</div>
+			<div style="padding-top:7px;">
+				<a class="name" href="{{visitor}}" target="{{fromTarget}}">{{name}}</a>
+				<div class="time">{{time}}</div>
+			</div>
+		</div>
+		<a href="{{destinationLink}}" target="{{linkTarget}}" class="title">
+			<div class="pictures">
+				{{#Pictures}}
+					<img src="{{.}}" alt="^_^">
+				{{/Pictures}}
+			</div>
+			<div class="clearfix"></div>
+			<div class="content">
+				<div>
+					<p><b>{{title}}</b></p>
+					<p>{{content}}</p>
+				</div>
+			</div>
+		</a>
+	</div>
+</script>
+<script>
+	$(function(){
+		var $container = $('#feedContainer');
+		var canRead=false;
+		$container.data("pageMax", 0);
+		$container.masonry({
+			itemSelector : '.box',
+			columnWidth : 280,
+			isAnimated: true,
+			animationOptions: {
+			    duration: 300,
+			    easing: 'linear',
+			    queue: false
+			}
+		});
+		var id = getquery();
+		if (!id) {
+			id=$.cookie("userid");
+			canRead=true;
+		}
+		get_data(1, id);
+		// $("#searchFeeds").click(function(){
+		// 	var $boxes = $( boxMaker.makeBoxes() );
+		// 	$container.prepend( $boxes ).masonry( 'reload' );
+		// });
+		function get_data(pageIndex, id) {
+			amplify.request({
+				resourceId: "myfeeds",
+				data: {"pageIndex": pageIndex, "id": id},
+				success: show_data(pageIndex),
+				error: function(){
+					$container.html("<h3>添加好友后可以查看好友新鲜事！</h3>");
+				},
+			});
+		}
+		function show_data(pageIndex) {
+			$container.data("pageIndex", pageIndex);
+			return function (data) {
+				var template = $("#feeds").html();
+				if (data.length === 0) {
+					if ($container.data("pageIndex") === 1) {
+						$("#feedContainer").html("<h2>没有新鲜事</h2>");
+					}
+					$container.data("pageIndex", 0);
+					$container.data("pageMax", pageIndex);
+				}
+				for (var i = 0; i < data.length; i++) {
+					var box;
+					var target="_blank";
+					if(data[i].FromLink=="javascript:void(0);")
+					{
+						target="_self";
+					}
+					if (data[i].Pictures!=null && data[i].Pictures.length>3) 
+					{
+						box = Mustache.render(template,{id:data[i].Id, width:'w3', avatar:data[i].FromAvatar, visitor:data[i].FromLink, fromTarget:target, name:data[i].FromName, title:data[i].Title, content:data[i].Text, time:time_change(data[i].Time), Pictures:data[i].Pictures, destinationLink:data[i].DestinationLink, linkTarget:data[i].LinkTarget});
+
+					}else if (data[i].Pictures!=null && data[i].Pictures.length>2) 
+					{
+						box = Mustache.render(template,{id:data[i].Id, width:'w2', avatar:data[i].FromAvatar, visitor:data[i].FromLink, fromTarget:target, name:data[i].FromName, title:data[i].Title, content:data[i].Text, time:time_change(data[i].Time), Pictures:data[i].Pictures, destinationLink:data[i].DestinationLink, linkTarget:data[i].LinkTarget});
+					}else if(data[i].Pictures!=null && data[i].Pictures.length>1)
+					{
+						box = Mustache.render(template,{id:data[i].Id, width:'w1', avatar:data[i].FromAvatar, visitor:data[i].FromLink, fromTarget:target, name:data[i].FromName, title:data[i].Title, content:data[i].Text, time:time_change(data[i].Time), Pictures:data[i].Pictures, destinationLink:data[i].DestinationLink, linkTarget:data[i].LinkTarget});
+					}else if(data[i].Pictures!=null && data[i].Pictures.length==1)
+					{
+						box = Mustache.render(template,{id:data[i].Id, avatar:data[i].FromAvatar, visitor:data[i].FromLink, fromTarget:target, name:data[i].FromName, title:data[i].Title, content:data[i].Text, time:time_change(data[i].Time), Pictures:data[i].Pictures, destinationLink:data[i].DestinationLink, linkTarget:data[i].LinkTarget});
+					}else{
+						box = Mustache.render(template,{id:data[i].Id, avatar:data[i].FromAvatar, visitor:data[i].FromLink, fromTarget:target, name:data[i].FromName, title:data[i].Title, content:data[i].Text, time:time_change(data[i].Time), destinationLink:data[i].DestinationLink, linkTarget:data[i].LinkTarget});
+					}
+					//$container.append( box );
+					$container.append( box ).masonry( 'reload' );
+					if(canRead)
+					{
+						$(".box .delete:last").click(function(){
+							amplify.request({
+								resourceId: "readfeed",
+								data: {feedId:$(this).parent().siblings("span:first").text()},
+								success: function($this){
+									return function(){
+										$this.parent().parent().remove();
+										$container.masonry( 'reload' );
+									}
+								}($(this)),
+								error: function(){
+									$('table tbody').html("<h3>发生未知错误</h3>");
+								}
+							});
+						});
+					}
+					if(canRead)
+					{
+						$("a.title").click(function(){
+							amplify.request({
+								resourceId: "readfeed",
+								data: {feedId:$(this).siblings("span:first").text()},
+								success: function($this){
+									return function(){
+										$container.remove( $this.parent().parent() ).masonry( 'reload' );
+									}
+								}($(this)),
+								error: function(){
+									$('table tbody').html("<h3>发生未知错误</h3>");
+								}
+							});
+						});
+					}
+					if(data[i].DestinationLink!=null)
+					{
+						$(".box .text:last").click(function(){
+							window.open($(this).children("span:first").text());
+							if(canRead)
+							{
+								amplify.request({
+									resourceId: "readfeed",
+									data: {feedId:$(this).siblings("span:first").text()},
+									success: function($this){
+										return function(){
+											$this.parent().remove();
+											$container.masonry( 'reload' );
+										}
+									}($(this)),
+									error: function(){
+										$('table tbody').html("<h3>发生未知错误</h3>");
+									}
+								});
+							}
+						});
+					}
+				}
+				$container.imagesLoaded( function() {
+					$container.masonry('reload');
+				});
+			}
+		}
+		$(window).unbind("scroll").scroll(function () {
+			var a = document.documentElement.scrollTop==0? document.body.clientHeight : document.documentElement.clientHeight;
+			var b = document.documentElement.scrollTop==0? document.body.scrollTop : document.documentElement.scrollTop;
+			var c = document.documentElement.scrollTop==0? document.body.scrollHeight : document.documentElement.scrollHeight;
+			if (b > 100 ) {
+				$(".go-top").show();
+			}
+			else {
+				$(".go-top").hide();
+			}
+			if ( a + b == c) {
+				var pageIndex = $container.data("pageIndex");
+				var pageMax = $container.data("pageMax");
+				if (pageIndex > 0 && (pageMax===0 || pageIndex < pageMax)) {
+					get_data(pageIndex + 1, id);
+				}
+			}
+		});
+		$("#loadMore").bind("click", function () {
+			var pageIndex = $container.data("pageIndex");
+			var pageMax = $container.data("pageMax");
+			if (pageIndex > 0 && (pageMax===0 || pageIndex < pageMax)) {
+				get_data(pageIndex + 1, id);
+			}
+			else
+			{
+				$("#loadMore").text("没有更多了@_@");
+			}
+		});
+		
+		$(".go-top").bind("click", function (event) {
+			$("html, body").animate({scrollTop: 0}, 100);
+		});
+	});
+</script>

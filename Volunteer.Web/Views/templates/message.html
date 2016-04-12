@@ -1,0 +1,94 @@
+<div class="filter" style="padding: 10px 20px 10px 0px;">
+    <div class="filter-search">
+        <div class="row">
+            <div class="col-xs-6 text-left" id="messageSelect">
+                <button style="margin-left:20px;" class="btn btn-default all">显示全部</button>
+                <button style="margin-left:20px;" class="btn btn-default unread">仅显示未读</button>
+                <button style="margin-left:20px;" class="btn btn-default remove">删除</button>
+            </div>
+            <div class="col-xs-6 text-right" style="padding-top: 7px;">
+                <div class="pull-right">
+                    未读信息:<strong id="unread_count">0</strong>
+                </div>
+                <div class="pull-right">
+                    所有信息:<strong id="all_count">0</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel">
+    <div  class="panel-content">
+        <table class="table table-condensed table-hover" id="current">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Text</th>
+                    <th>时间</th>
+                    <th>发信人</th>
+                    <th><input type="checkbox"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <div class="text-center">
+            <div class="pull-left">
+                current Page:
+                <span class="current_page">1</span>
+            </div>
+            <a href="javascript:void(0);" class="prev">&lt;&lt;previous</a>
+            ||
+            <a href="javascript:void(0);" class="next">next&gt;&gt;</a>
+            <div class="pull-right">
+                total Page:
+                <span class="total_page">1</span>
+            </div>
+        </div>
+    </div>
+    <div class="detail" style="display: none;">
+        <a class="btn">
+            <span class="glyphicon glyphicon-circle-arrow-left"></span>
+            返回
+        </a>
+        <strong>From {{messageFrom}}</strong>
+        <h3>{{title}}<small>{{sendtime}}</small></h3>
+        <div class="message-detail">
+            {{text}}
+        </div>
+    </div>
+</div>
+<style>
+    .detail a {
+        color: #999999;
+    }
+</style>
+<script type="x-tmpl-mustache" id="message_tmpl">
+    {{#messages}}
+    <tr id="{{Id}}">
+        {{^HasRead}}
+        <td class="title"><b>{{Title}}</b></td>
+        {{/HasRead}}
+        {{#HasRead}}
+        <td class="title">{{Title}}</td>
+        {{/HasRead}}
+        <td class="text">{{Text}}</td>
+        <td class="sendtime">{{localTime}}</td>
+        <td class="from">{{MessageFrom}}</td>
+        <td><input type="checkbox"></td>
+    </tr>
+    {{/messages}}
+</script>
+<script>
+$(function() {
+    if ($("#messages").length === 0) {
+        $("body").append("<script src='js\/messages\/message.request.js'><\/script>");
+        $("body").append("<script src='js\/messages\/message.js' id='messages'><\/script>");
+        $("#messages").ready(function () {
+            $("#main-body").trigger("message.init");
+        });
+    }
+    $("#main-body").trigger("message.init");
+});
+</script>

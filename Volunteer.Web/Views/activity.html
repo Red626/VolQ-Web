@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>志趣VolQ_志愿者</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/amplify.min.js"></script>
+		<script src="js/jquery.easing.min.js"></script>
+		<script src="js/jquery.zaccordion.js"></script>
+		<script src="js/summernote.js"></script>
+		<script src="js/lib/mustache.js"></script>
+		<script src="js/jquery.masonry.min.js"></script>
+		<script src="js/lib/jquery-ui.autocomplete.min.js"></script>
+		<script src="js/my.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link rel="icon" href="image/volq.ico" type="image/x-icon" />
+	</head>
+	<body>
+		<div class="site-body">
+			<div class="container" id="modalContent"></div>
+		</div>
+		<footer class="site-footer">
+			<a href="http://www.volq.org/Static/Mobile/Android/Latest/app-release.apk" target="_blank" onfocus="this.blur();" title="点击下载最新客户端">官方客户端<br class="visible-xs-block"/>
+				<img src="image/qrcode/android.png">
+			</a><br class="visible-xs-block"/>
+			<a href="javascript:void(0);" onfocus="this.blur();">
+			官方微信<br class="visible-xs-block"/>
+				<img src="image/qrcode/wechat.png">
+			</a>
+			<br class="visible-xs-block"/>
+			<div style="display:inline-block;">
+				<span>&copy;VolQ志趣游戏化志愿者平台2015</span><br/>
+				有问题请联系我们：<a href="mailto:feedback@volq.org">feedback@volq.org</a>
+			</div>
+		</footer>
+		<div class="modal fade" id="add_firend_info">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+						<h4>验证信息</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-2 text-right" style="padding-top: 8px;">
+								<label>信息</label>
+							</div>
+							<div class="col-sm-10">
+								<input type="text" placeholder="请输入验证信息" class="form-control" name="comment">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+						<button type="button" class="btn btn-primary" id="sure">sure</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="js/activity/activity.request.js"></script>
+	<script src="js/activity/activity.js"></script>
+</html>

@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<title>志趣VolQ_志愿者</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="icon" href="image/volq.ico" type="image/x-icon" /> 
+</head>
+<body>
+	<div class="site-menu">
+		<h1 class="volq">志 趣</h1>
+	</div>
+	<div class="site-body">
+		<div class="container">
+			<div class="regist-form">
+				<div class="row">
+					<div class="col-sm-6 signin-left">
+						<img class="logo" src="image/volq_logo.png"></img>
+						<img src="image/luoli1.jpg" alt="呵呵" id="splash">
+					</div>
+					<div class="col-sm-6">
+						<div class="panel form-body">
+						<form role="form">
+							<input type="hidden" name="referralUserId" style="display:none;">
+							<div class="form-group">
+								<label class="title">邮箱</label><span class="warnning">*</span><label class="error-message pull-right"></label>
+								<input class="form-control" type="email" name="email" id="email" placeholder="为了账户安全，请用真实邮箱注册"/>
+							</div>
+							<div class="form-group">
+								<label class="title">手机号</label><label class="error-message pull-right"></label>
+								<input class="form-control" type="email" name="phoneNumber" id="phoneNumber" placeholder="为了账户安全，请用真实手机号注册（可选）"/>
+							</div>
+							<div class="form-group">
+								<label class="title">密码</label><span class="warnning">*</span><label class="error-message pull-right"></label>
+								<input class="form-control" type="password" name="password" id="password" placeholder="请输入密码"/>
+							</div>
+							<div class="form-group">
+								<label class="title">姓名</label><span class="warnning">*</span><label class="error-message pull-right"></label>
+								<input class="form-control" type="text" name="name" id="name" placeholder="请输入姓名"/>
+							</div>
+							<div class="form-group">
+								<label class="title">性别</label><span class="warnning">*</span><label class="error-message pull-right"></label>
+								<label class="checkbox-inline"><input type="radio" name="sex" value="m" checked="true" />男</label>
+								<label class="checkbox-inline"><input type="radio" name="sex" value="w"/>女</label>
+							</div>
+							<div class="form-group">
+								<label class="title">角色</label><span class="warnning">*</span><label class="error-message pull-right"></label>
+								<label class="checkbox-inline"><input type="radio" name="role" value="a" checked="true" />志愿者</label>
+								<label class="checkbox-inline"><input type="radio" name="role" value="b"/>组织者</label>
+								<label class="checkbox-inline"><input type="radio" name="role" value="c" id="organization"/>组织</label>
+							</div>
+							<div class="form-group">
+								<label class="title">验证码</label><span class="warnning">*</span><label class="error-message pull-right"></label>
+								<table style="width:100%;">
+									<tr>
+										<td>
+											<input class="form-control" type="text" name="validateCode" id="validateCode" placeholder="请输入验证码">
+										</td>
+										<td>
+											<input type="hidden" name="id">
+											<img id="validateImage" class="pull-right" src="data:image/gif;base64,R0lGODlhAgACAIAAAP///wAAACwAAAAAAgACAAACAoRRADs="/>
+										</td>
+									</tr>
+								</table>
+							</div>
+							<div class="form-group has-error hidden" id="error">
+								<label class="control-label" id="server-error"></label>
+							</div>
+							<div class="form-group">
+								<div class="text-center">
+								<button type="button" class="btn btn-danger" value="submit" id="submit" >注册</button>
+								<a href="javascript:void(0);" class="pull-left" style="padding:6px 12px;">用户须知</a>
+								<a href="signin.html" class="pull-right" style="padding:6px 12px;">直接登陆</a>
+								</div>
+							</div>
+						</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <footer class="site-footer">
+		<a href="http://www.volq.org/Static/Mobile/Android/Latest/app-release.apk" target="_blank" onfocus="this.blur();" title="点击下载最新客户端">官方客户端<br class="visible-xs-block"/>
+			<img src="image/qrcode/android.png">
+		</a><br class="visible-xs-block"/>
+		<a href="javascript:void(0);" onfocus="this.blur();">
+		官方微信<br class="visible-xs-block"/>
+			<img src="image/qrcode/wechat.png">
+		</a>
+		<br class="visible-xs-block"/>
+		<div style="display:inline-block;">
+			<span>&copy;VolQ志趣游戏化志愿者平台2015</span><br/>
+			有问题请联系我们：<a href="mailto:feedback@volq.org">feedback@volq.org</a>
+		</div>
+	</footer>
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/lib/stickUp.min.js"></script>
+	<script src="js/my.js"></script>
+    <script>
+	$(document).ready(function(){
+		setTimeout(function() {$(".site-menu").stickUp();}, 500);
+		$("a[href='signin.html']").attr("href","signin.html"+window.location.hash);
+		randomSplash();
+		var error_occured={};
+		//$('input:first').focus();
+		$('#email').focus(function(){
+			$('#email').siblings('.error-message').text('');
+			$('#email').removeClass('error');
+			$('#error').addClass('hidden');
+		});
+		$('#email').blur(function(){
+			var email=$('#email').val();
+			error_occured.email=0;
+			if(email.length==0){
+				error_occured.email=1;
+			}
+			var indexOfAt=email.indexOf('@');
+			if(indexOfAt<=0){
+				error_occured.email=1;
+			}else{
+				var indexOfdot=email.indexOf('.',indexOfAt+1);
+				if(indexOfdot<=0 || indexOfdot==(email.length-1)){
+					error_occured.email=1;
+				}
+			}
+			if(error_occured.email==1){
+				$('#email').siblings('.error-message').text("Email error!");
+				$('#email').addClass('error');
+				return ;
+			}
+			$.get('/api/user/checkEmail','email='+$('#email').val(),function(data){
+				if(data=="True")
+				{
+					$('#email').siblings('.error-message').text("Email has been registered!");
+					$('#email').addClass('error');
+					error_occured.email=1;
+				}
+			}).error(function(data){
+				$('#error').removeClass('hidden');
+				$('#server-error').text(data.responseText);
+			});
+		});
+		
+		$(':password').focus(function(){
+			$('#password').siblings('.error-message').text('');
+			$('#password').removeClass('error');
+			$('#error').addClass('hidden');
+		});
+		$(':password').blur(function(){
+			var password=$('#password').val();
+			error_occured.password=0;
+			if(password.length==0){
+				$('#password').siblings('.error-message').text("Password error!");
+				$('#password').addClass('error');
+				error_occured.password=1;
+			}
+			else if(password.length<6){
+				$('#password').siblings('.error-message').text("Password too short!");
+				$('#password').addClass('error');
+				error_occured.password=1;
+			}
+		});
+
+		$('#name').focus(function(){
+			$('#name').siblings('.error-message').text('');
+			$('#name').removeClass('error');
+			$('#error').addClass('hidden');
+		});
+		$('#name').blur(function(){
+			var name=$('#name').val();
+			error_occured.name=0;
+			if(name.length==0){
+				$('#name').siblings('.error-message').text("Name error!");
+				$('#name').addClass('error');
+				error_occured.name=1;
+			}
+			else if(name.length>20){
+				$('#name').siblings('.error-message').text("Name too long!");
+				$('#name').addClass('error');
+				error_occured.name=1;
+			}
+		});
+
+		$("#validateCode").focus(function(){
+			$('#validateCode').parents("table").siblings('.error-message').text('');
+			$('#validateCode').removeClass('error');
+			$('#error').addClass('hidden');
+		});
+		$('#validateCode').blur(function(){
+			var validateCode=$('#validateCode').val();
+			error_occured.validateCode=0;
+			if(validateCode.length==0){
+				$('#validateCode').parents("table").siblings('.error-message').text("Validate Code error!");
+				$('#validateCode').addClass('error');
+				error_occured.validateCode=1;
+			}
+		});
+		$("#organization").click(function(){
+			alert("组织机构需邀请注册，请联系管理员！");
+			$(this).attr("checked",false);
+		});
+		$("#submit").click(function(){
+			$("#email").blur();
+			$("#name").blur();
+			$("#password").blur();
+			$("#validateCode").blur();
+			var error=0;
+			for(item in error_occured)
+			{
+				error+=error_occured[item];
+			}
+			if(error>0){
+				return ;
+			}
+			var a={}
+			var information=$('form').serializeArray();
+			for (var i = information.length - 1; i >= 0; i--) {
+				a[information[i].name]=information[i].value
+			};
+			$.post('/api/user/register/',information,function(){
+				email=$('#email').val();
+				password=$('#password').val();
+				post_body='email='+email+'&'+'password='+password
+				$.post('/api/user/login',post_body,function(data){
+					if(data.status=="OK"){
+						$.cookie('userid',data.userId+';path=/');
+						//$.cookie('name',data.name+';path=/');
+						$.cookie('token',data.token+';path=/');
+						$.cookie('role',data.role+';path=/');
+						if(window.location.hash)
+						{
+							document.location.href=window.location.hash.substring(1);
+						}
+						else if(data.role=="Volunteer"){
+							document.location.href="volunteer.html";
+						}
+						else if (data.role=="Organizer") {
+							document.location.href="organizer.html";
+						}
+						else if (data.role=="Organization") {
+							document.location.href="organization.html";
+						}
+						else{
+							document.location.href="dashboard.html";
+						};
+					}
+					else if(data.status=="ERROR"){
+						$('#error').removeClass('hidden');
+						$('#error label').text("账号或者密码错误!");
+					}
+					else{
+						$('#error').removeClass('hidden');
+						$('#error label').text("未知错误!");
+					}
+				}).error(function(dat){
+					$('error').removeClass('hidden');
+					$('#error label').text(dat.responseText);
+					$.cookie('islogged','0',0);
+				});
+			}).error(function(data) {
+				$('#error').removeClass('hidden');
+				$('#server-error').text(data.responseText);
+			});
+		});
+		$("#validateImage").on("click", function (){
+			$.ajax({
+		    	url: "/api/user/ValidateImage",
+		    	type: "get",
+		    	success: function (data) {
+		    		$("#validateImage").attr("src","data:image/gif;base64,"+data.image);
+		    		$("input[name='id']").val(data.id);
+		    	},
+		    	error: function () {
+		    		$('table tbody').html("<h3>发生未知错误</h3>");
+		    	}
+		    });
+		});
+		init();
+	});//end ready
+	$.AutoComplete('#email');
+	function init() {
+		var userId=getquery();
+		$("input[name='referralUserId']").val(userId);
+	    $.ajax({
+	    	url: "/api/user/ValidateImage",
+	    	type: "get",
+	    	success: function (data) {
+	    		$("#validateImage").attr("src","data:image/gif;base64,"+data.image);
+	    		$("input[name='id']").val(data.id);
+	    	},
+	    	error: function () {
+	    		$('table tbody').html("<h3>发生未知错误</h3>");
+	    	}
+	    });
+	}
+	function randomSplash() {
+	    var n = Math.floor(Math.random()*3)+1;
+	    $('#splash').attr('src', "image/luoli" + n + ".jpg");
+	}
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>志趣VolQ_志愿者</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/lib/jquery.validate.min.js"></script>
+	<link rel="icon" href="image/volq.ico" type="image/x-icon" />
+</head>
+<body>
+	<div class="site-body">
+		<div class="container">
+			<div class="container regist-form">
+				<div class="row">
+					<div class="col-sm-6 signin-left">
+						<img class="logo" src="image/volq_logo.png"></img>
+						<img src="image/luoli1.jpg" alt="呵呵">
+					</div>
+					<div class="col-sm-6">
+						<div class="panel form-body">
+							<span id="verifyResult"></span>
+							<span id="countDown"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer class="site-footer">
+		<span>&copy;VolQ志趣游戏化志愿者平台2015</span><br/>
+		有问题请联系我们：<a href="mailto:feedback@volq.org">feedback@volq.org</a>
+	</footer>
+	<script>
+		$(function() {
+			var query = window.location.search.slice(1);
+			$.ajax({
+				type: "POST",
+				url:"/api/user/verifyemail",
+				data: query,
+				success: function () {
+					$("#verifyResult").text("恭喜您，已成功注册邮箱！");
+					startCountDown(3000);
+				},
+				error: function (data) {
+					$("#verifyResult").text("验证失败，请重新验证邮箱！");
+				}
+			});
+		});
+		function startCountDown(total)
+		{
+			if(total<=0)
+			{
+				window.location.href = "http://www.volq.org";
+				return;
+			}
+			$("#countDown").text("离跳转还有"+total/1000+"秒");
+			t=setTimeout(function(){startCountDown(total-1000)},1000);
+		}
+	</script>
+</body>
+</html>

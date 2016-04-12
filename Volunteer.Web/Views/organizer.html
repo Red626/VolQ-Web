@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<title>志趣VolQ_志愿者</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/lib/stickUp.min.js"></script>
+	<script src="js/jquery.datetimepicker.js"></script>
+	<script src="js/sammy-latest.min.js"></script>
+	<script src="js/amplify.min.js"></script>
+	<script src="js/lib/mustache.js"></script>
+	<script src="js/lib/jquery.validate.min.js"></script>
+	<script src="js/lib/jquery-ui.autocomplete.min.js"></script>
+	<script src="js/zyFile.js"></script>
+	<script src="js/zyUpload.js"></script>
+	<script src="js/summernote.js"></script>
+	<script src="js/jquery.tagsinput.js"></script>
+	<script src="js/jquery.smartWizard-2.0.min.js"></script>
+	<script src="js/jquery.masonry.min.js"></script>
+	<script src="js/jquery.easing.min.js"></script>
+	<script src="js/jquery.zaccordion.js"></script>
+	<script src="js/my.js"></script>
+	<script src="http://api.map.baidu.com/api?v=2.0&ak=mY1LyCl9R9Hiziuye9sGfR1G"></script>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/organizer.css">
+	<link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
+	<link rel="stylesheet" type="text/css" href="css/zyUpload.css">
+	<link rel="stylesheet" type="text/css" href="css/summernote.css">
+	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="css/jquery.tagsinput.css" />
+	<link rel="stylesheet" type="text/css" href="css/smart_wizard.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="icon" href="image/volq.ico" type="image/x-icon" />
+</head>
+<body>
+	<div class="site-header">
+		<div class="row">
+			<div class="col-lg-3 visible-lg-block">
+				<img src="image/hands.png" class="site-logo">
+			</div>
+			<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3">
+				<h1 class="volq">志趣</h1>
+			</div>
+			<div class="col-xs-10 col-sm-9  col-md-9 col-lg-6">
+				<div id="avatar" class="pull-left">
+					<img class="avatar img-responsive" alt="">
+				</div>
+				<div class="pull-left">
+					<h3 class="name"></h3>
+					<span class="roleName"></span>
+					<a id="logout" role="menuitem" href="javascript:void(0);" title="注销"><img src="image/off_white.png" class="ico"></a>
+					<h5 class="description"></h5>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="site-menu">
+		<div class="not-logged text-right">
+			<a href="signin.html"><button class="btn btn-default">注册/登陆</button></a>
+		</div>
+		<div class="logged hidden row">
+			<div class="pull-left">
+				<div class="visible-lg-block" style="position:relative;">
+					<img src="image/volq_logo.png" alt="" style="width: 160px; position: relative; top: 5px;" >
+					<div class="list-group menu-left" >
+						<a class="list-group-item" role="menuitem" href="#/myogns"><img src="image/structure.png" class="ico">我的组织</a>
+						<a class="list-group-item" role="menuitem" href="#/profile"><img src="image/me.png" class="ico">我的信息</a>
+						<a class="list-group-item" role="menuitem" href="#/addactivity"><img src="image/signin_gray.png" class="ico">创建活动</a>
+						<a class="list-group-item" role="menuitem" href="#/myactivities"><img src="image/mine_gray.png" class="ico">我的活动</a>
+						<a class="list-group-item" role="menuitem" href="#/service"><img src="image/mail_pink.png" class="ico">我要吐槽</a>
+					</div>
+				</div>
+				<div class="dropdown hidden-lg">
+				   <a id="menu" data-toggle="dropdown" href="javascript:void(0);">
+				   		<button class="btn btn-default">
+					   		<span class="caret"></span>
+					   		<strong id="currentPath">我的组织</strong>
+					   	</button>
+				   </a>
+				   <ul class="dropdown-menu self-menu" role="menu">
+				      <li role="presentation">
+				         <a role="menuitem" href="#/myogns"><img src="image/structure.png" class="ico">我的组织</a>
+				      </li>
+				      <li role="presentation">
+				         <a role="menuitem" href="#/profile"><img src="image/me.png" class="ico">我的信息</a>
+				      </li>
+				      <li role="presentation">
+				         <a role="menuitem" href="#/addactivity"><img src="image/signin_gray.png" class="ico">创建活动</a>
+				      </li>
+				      <li role="presentation">
+				        <a role="menuitem" href="#/myactivities"><img src="image/mine_gray.png" class="ico">我的活动</a>
+				      </li>
+				      <li role="presentation" class="divider"></li>
+				      <li role="presentation">
+				        <a role="menuitem" href="#/service"><img src="image/mail_pink.png" class="ico">我要吐槽</a>
+				      </li>
+				    </ul>
+				</div>
+			</div>
+			<div class="list">
+				<div id="myorgs-item" style="display:none;" class="text-center">
+					<ul role="menu" aria-labelledby="all_list1">
+						<li class="organizations"><a href="javascript:void(0);" class="menu-item" id="organizationStastic">数据统计</a></li>
+						<li class="organizations"><a href="javascript:void(0);" class="menu-item" id="myOrganization">我的组织</a></li><br class="visible-xs-block"/>
+						<li class="organizations"><a href="javascript:void(0);" class="menu-item" id="applyOrganization">加入组织</a></li>
+						<li class="organizations"><a href="javascript:void(0);" class="menu-item" id="myApplys">我的申请</a></li>
+					</ul>
+				</div>
+				<div id="service-item" style="display:none;" class="text-center">
+					<ul role="menu">
+						
+					</ul>
+				</div>
+				<div id="me-item" style="display:none;" class="text-center">
+					<ul role="menu" aria-labelledby="all_list2">
+						<li class="mine"><a href="#/profile" class="menu-item">个人资料</a></li>
+						<li class="mine"><a href="#/messages" class="menu-item">我的消息</a></li>
+					</ul>
+				</div>
+				<div id="activities-item" style="display:none;" class="text-center">
+					<ul role="menu" aria-labelledby="all_list3">
+						<li class="activity"><a href="javascript:void(0);" class="menu-item" id="abouttostart">即将开始</a></li>
+						<li class="activity"><a href="javascript:void(0);" class="menu-item" id="running">正在进行</a></li><br class="visible-xs-block"/>
+						<li class="activity"><a href="javascript:void(0);" class="menu-item" id="finished">已结束</a></li>
+						<li class="activity"><a href="javascript:void(0);" class="menu-item" id="all">全部</a></li>
+						<li class="activity"><a href="javascript:void(0);" class="menu-item" id="draft">草稿</a></li>
+					</ul>
+				</div>
+				<div id="operation-item" style="display:none;" class="text-center">
+					<ul role="menu" aria-labelledby="all_list4">
+						<li class="operation"><a href="#/addactivity" class="menu-item" id="newactivity">新活动</a></li>
+						<li class="operation"><a href="#/draft" class="menu-item" id="draftactivities">草稿</a></li>
+					</ul>
+				</div>
+				<div id="manage-item" style="display:none;" class="text-center">
+					<ul role="menu" aria-labelledby="all_list5">
+						<li class="operation"><a href="javascript:void(0);" class="menu-item">管理活动</a></li>
+					</ul>
+				</div>
+			</div>
+			<!--div class="hidden-xs hidden-sm col-md-1 col-lg-1">
+				<a id="message" href="#/messages">
+					<span class="glyphicon glyphicon-envelope"></span>
+					<span class="glyphicon glyphicon-info-sign" id="unreadMessage" style="display:none;"></span>
+				</a> 
+			</div-->
+		</div>
+	</div>
+	<div class="site-body">
+		<div class="site-container" id="main-body"></div>
+	</div>
+	<footer class="site-footer">
+		<div class="site-container">
+			<span>&copy;VolQ志趣游戏化志愿者平台2015</span><br/>
+			有问题请联系我们：<a href="mailto:feedback@volq.org">feedback@volq.org</a>
+		</div>
+	</footer>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body" id="modalContent">
+				</div>
+				<div class="modal-footer visible-xs-block">
+					<button class="btn btn-default" style="width:100%;" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+<script src="js/jquery.form.js"></script>
+<script src="js/organizer/organizer.route.js"></script>
+<script src="js/organizer/organizer.request.js"></script>
+<script>
+	$(document).ready(function(){
+		validate();
+		main_click_functions();
+		setUI();
+	    $('#logout').click(logout);
+		$("#avatar").click(function(){
+			document.location.href="organizer.html#/profile";
+		});
+	});
+</script>
+</body>
+</html>

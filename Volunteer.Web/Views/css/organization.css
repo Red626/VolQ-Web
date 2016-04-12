@@ -1,0 +1,30 @@
+.ogn-bg {
+	background-color: #9B59B6;
+	height: 100px;
+	opacity: 0.9;
+}
+.ogn-left {
+	max-height: 120px;
+}
+.ogn-img {
+	margin-left: 10px;
+	position: relative;
+	top: -30px;
+	background-color: #2980B9;
+	width: auto;
+	height: 140px;
+}
+.ogn-title {
+	margin-top: 10px;
+}
+.ogn-desc {
+	font-size: 16px;
+	padding-left: 5px;
+}
+.activities {
+	margin-top: 10px;
+	border-top: 2px solid #BDC3C7;
+}
+#main-nav {
+	width: 70%;
+}

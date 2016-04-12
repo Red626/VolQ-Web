@@ -1,0 +1,23 @@
+<div style="margin:10px;">
+    <div style="font-size:20px;margin:20px 0 5px 0;">请写下您的宝贵意见或建议！我们会用心倾听并持续改进产品，把更好的体验带给您！<span style="font-size:15px;" id="validNum"></span></div>
+    <textarea class="form-control" rows="6" onKeyDown="checkLength(this,500)" onKeyUp="checkLength(this,500)" onPaste="checkLength(this,500)" name="mailContent"></textarea>
+    <button class="btn btn-default" style="width:100%;" id="submitSuggestion"><img class="ico" src="image/makeComment.png"/>提交</button>
+    <div style="margin-top:20px;width:100%;color:#3498DB;" class="text-center" id="suggestionStatus"></div>
+</div>
+<script>
+$(function() {
+    $("#submitSuggestion").click(function(){
+        amplify.request({
+            resourceId: "suggestion",
+            data: {content: $("textarea[name='mailContent']").val()},
+            success: function() {
+                $("#suggestionStatus").text("您已于"+update_time(new Date())+"成功提交意见！谢谢@_@");
+                $("textarea[name='mailContent']").val("");
+            },
+            error: function() {
+                $("#suggestionStatus").text(update_time(new Date())+"您的意见反馈出现错误！");
+            }
+        });
+    });
+});
+</script>

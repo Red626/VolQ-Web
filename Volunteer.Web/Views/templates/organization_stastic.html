@@ -1,0 +1,213 @@
+<div class="gap clearfix"></div>
+<div class="masonry" id="stastic">
+	<div class="box w4 top4" id="presentPoint">
+		<fieldset>
+			<legend>我的分数</legend>
+			<div class="content">
+				<table class="table table-condensed table-hover">
+					<thead>
+						<tr class="info">
+							<th>本月分配数额</th>
+							<th>本月消耗</th>
+							<th>本月余额</th>
+							<th>分数总消耗</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td id="presentTotalPoint">0</td>
+							<td id="presentConsumePoint">0</td>
+							<td id="presentRemainPoint">0</td>
+							<td id="totalConsumePoint">0</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</fieldset>
+	</div>
+	<div class="box w4 top7" id="myActivity">
+		<fieldset>
+			<legend>我的活动</legend>
+			<div class="content">
+				<table class="table table-condensed table-hover">
+					<thead>
+						<tr class="info">
+							<th>总活动数</th>
+							<th>总参加人数</th>
+							<th>平均每次活动人数</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td id="totalActivityNum">0</td>
+							<td id="totalParticipantNum">0</td>
+							<td id="averageParticipantNumPerActivity">0</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</fieldset>
+	</div>
+	<div class="box w1 h3 top5" id="monthConsume" style="display:none;">
+		<fieldset>
+			<legend>每月分数消耗</legend>
+			<div class="content">
+				<canvas id="consumeChart"></canvas>
+			</div>
+		</fieldset>
+	</div>
+	<div class="box w1 h3 top6" id="monthRemain" style="display:none;">
+		<fieldset>
+			<legend>每月分数余额</legend>
+			<div class="content">
+				<canvas id="remainChart"></canvas>
+			</div>
+		</fieldset>
+	</div>
+	<div class="box w1 h3 top8" id="monthParticipant" style="display:none;">
+		<fieldset>
+			<legend>每月参加人数</legend>
+			<div class="content">
+				<canvas id="participantChart"></canvas>
+			</div>
+		</fieldset>
+	</div>
+	<div class="box top9" id="myProperty">
+		<fieldset>
+			<legend>属性成长</legend>
+			<div class="content">
+				<canvas id="hexagram" width="250" height="250"></canvas>
+			</div>
+		</fieldset>
+	</div>
+</div>
+<script>
+	$(function(){
+		$container = $("#stastic");
+		$container.masonry({
+			itemSelector : '.box',
+			columnWidth : 280,
+			isAnimated: true,
+			animationOptions: {
+			    duration: 300,
+			    easing: 'linear',
+			    queue: false
+			}
+		});
+		$container.imagesLoaded( function() {
+			$container.masonry('reload');
+		});
+		var id = $.cookie("id");
+		var query = getquery();
+		if (query) {
+			id = query;
+		}
+		amplify.request({
+			resourceId: "statistics",
+			data: {id: id},
+			success: function (data) {
+				var dateArray=[];
+				var consumePointPerMonth=[];
+				var remainPointPerMonth=[];
+				var participantNumPerMonth=[];
+				var strength=0;
+				var intelligence=0;
+				var endurance=0;
+				var compassion=0;
+				var sacrifice=0;
+				$("#presentTotalPoint").text(data.TotalPointEachMonth);
+				$("#presentConsumePoint").text(data.TotalPointEachMonth-data.RemainingSum);
+				$("#presentRemainPoint").text(data.RemainingSum);
+				$("#totalConsumePoint").text(data.ConsumeAllPoint);
+				$("#totalActivityNum").text(data.AllActivityCount);
+				$("#totalParticipantNum").text(data.AllVolunteerCount);
+				var averageNum = data.AllActivityCount ? data.AllVolunteerCount/data.AllActivityCount : 0;
+				$("#averageParticipantNumPerActivity").text(averageNum);
+				if(data.StatisticsPerMonth.length>0)
+				{
+					$("#monthConsume").show();
+					$("#monthRemain").show();
+					$("#monthParticipant").show();
+					$container.masonry('reload');
+					
+					for(var i=0;i<data.StatisticsPerMonth.length;i++)
+					{
+						var date=new Date(data.StatisticsPerMonth[i].Date);
+						dateArray.push(date.getFullYear()+"."+date.getMonth());
+						consumePointPerMonth.push(data.StatisticsPerMonth[i].ConsumePoint);
+						remainPointPerMonth.push(data.StatisticsPerMonth[i].RemainPoint);
+						participantNumPerMonth.push(data.StatisticsPerMonth[i].VolunteerCount);
+						strength=strength+data.StatisticsPerMonth[i].HexagramProperty.Strength;
+						intelligence=intelligence+data.StatisticsPerMonth[i].HexagramProperty.Intelligence
+						endurance=endurance+data.StatisticsPerMonth[i].HexagramProperty.Endurance;
+						compassion=compassion+data.StatisticsPerMonth[i].HexagramProperty.Compassion;
+						sacrifice=sacrifice+data.StatisticsPerMonth[i].HexagramProperty.Sacrifice;
+					}
+					
+					var lineChartData = {
+						labels : dateArray,
+						datasets : [
+							{
+								label: "Consume Chart",
+								fillColor : "rgba(220,220,220,0.2)",
+								strokeColor : "rgba(220,220,220,1)",
+								pointColor : "rgba(220,220,220,1)",
+								pointStrokeColor : "#fff",
+								pointHighlightFill : "#fff",
+								pointHighlightStroke : "rgba(220,220,220,1)",
+								data : consumePointPerMonth
+							}
+						]
+					}
+					var ctx1 = document.getElementById("consumeChart").getContext("2d");
+					new Chart(ctx1).Line(lineChartData, {responsive: true});
+					lineChartData = {
+						labels : dateArray,
+						datasets : [
+							{
+								label: "Remain Chart",
+								fillColor : "rgba(220,220,220,0.2)",
+								strokeColor : "rgba(220,220,220,1)",
+								pointColor : "rgba(220,220,220,1)",
+								pointStrokeColor : "#fff",
+								pointHighlightFill : "#fff",
+								pointHighlightStroke : "rgba(220,220,220,1)",
+								data : remainPointPerMonth
+							}
+						]
+					}
+					var ctx2 = document.getElementById("remainChart").getContext("2d");
+					new Chart(ctx2).Line(lineChartData, {responsive: true});
+					lineChartData = {
+						labels : dateArray,
+						datasets : [
+							{
+								label: "Participant Chart",
+								fillColor : "rgba(220,220,220,0.2)",
+								strokeColor : "rgba(220,220,220,1)",
+								pointColor : "rgba(220,220,220,1)",
+								pointStrokeColor : "#fff",
+								pointHighlightFill : "#fff",
+								pointHighlightStroke : "rgba(220,220,220,1)",
+								data : participantNumPerMonth
+							}
+						]
+					}
+					var ctx3 = document.getElementById("participantChart").getContext("2d");
+					new Chart(ctx3).Line(lineChartData, {responsive: true});
+				}
+				else
+				{
+					$container.masonry('remove',$("#monthConsume"));
+					$container.masonry('remove',$("#monthRemain"));
+					$container.masonry('remove',$("#monthParticipant"));
+					$container.masonry('reload');
+				}
+				drawCanvas('hexagram',compassion,sacrifice,strength,endurance,intelligence,true);
+			},
+			error: function () {
+
+			}
+		});
+	});
+</script>

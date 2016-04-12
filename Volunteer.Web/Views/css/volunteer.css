@@ -1,0 +1,30 @@
+.me-tabs {
+	margin-bottom: 20px;
+}
+.achievements .achievement-item {
+	height: 70px;
+  width: 70px;
+  margin: 5px;
+  float: left;
+	background-color: #E74C3C;
+}
+.stastic {
+	font-size: 20px;
+	line-height: 1.2;
+}
+
+.profile {
+	font-size: 20px;
+	line-height: 1.2;
+}
+.profile .editable {
+	margin-top: 10px;
+}
+.profile span.label {
+	font-size: 14px;
+	position: relative;
+}
+.profile label {
+	font-size: 16px;
+	font-weight: 400;
+}
